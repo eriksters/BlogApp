@@ -1,12 +1,14 @@
 import { StatusBar } from "expo-status-bar";
 import React from "react";
 import { StyleSheet, Text, View } from "react-native";
-import BlogPostListItem from "./Components/BlogPostListItem";
 import {
   useFonts,
   Baskervville_400Regular,
 } from "@expo-google-fonts/baskervville";
 import AppLoading from "expo-app-loading";
+
+import BlogPostListItem from "./Components/BlogPostListItem";
+import BlogPostList from "./Screens/BlogPostList";
 
 export default function App() {
   let [fontsLoaded] = useFonts({
@@ -18,15 +20,7 @@ export default function App() {
   } else {
     return (
       <View style={styles.container}>
-        <BlogPostListItem
-          BlogPost={{
-            image: require("./assets/images/sadMan.jpg"),
-            description:
-              "It was a sad moment, when a local college student at UCN realized that college has not been what he thought it would be.",
-            title:
-              "Breaking news: College not as fun as you thought it would be!",
-          }}
-        />
+        <BlogPostList />
         <StatusBar style='auto' />
       </View>
     );
@@ -35,9 +29,9 @@ export default function App() {
 
 const styles = StyleSheet.create({
   container: {
-    paddingTop: 100,
+    paddingTop: 50,
     paddingHorizontal: 10,
-    flex: 1,
+    // flex: 1,
     backgroundColor: "#F0F0F0",
     alignItems: "center",
     justifyContent: "flex-start",

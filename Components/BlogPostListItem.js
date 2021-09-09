@@ -17,16 +17,6 @@ import Collapsible from "react-native-collapsible";
 const BlogPostListItem = ({ BlogPost }) => {
   const [expanded, setExpanded] = useState(false);
 
-  const Frontface = () => {
-    return <View style={{ height: 100, backgroundColor: "red" }}></View>;
-  };
-  const Backface = () => {
-    return <View style={{ height: 100, backgroundColor: "green" }}></View>;
-  };
-  const Base = () => {
-    return <View style={{ height: 100, backgroundColor: "blue" }}></View>;
-  };
-
   return (
     <View style={styles.container}>
       <TouchableOpacity activeOpacity={0.8}>
