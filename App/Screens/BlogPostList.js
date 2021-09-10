@@ -3,10 +3,14 @@ import { View, Text, StyleSheet, FlatList } from "react-native";
 import { useState, useEffect } from "react";
 import BlogPostListItem from "../Components/BlogPostListItem";
 import axios from "axios";
+import getEnvVars from "../environment";
 
 const BlogPostList = () => {
+  const ENV_VARS = getEnvVars();
+  const API_URL = ENV_VARS.API_URL;
+
   const api = axios.create({
-    baseURL: "https://warm-eagle-88.loca.lt",
+    baseURL: API_URL,
   });
 
   const [BlogPosts, setBlogPosts] = useState([]);
