@@ -21,14 +21,23 @@ const BlogPostListItem = ({ BlogPost }) => {
     <View style={styles.container}>
       <TouchableOpacity activeOpacity={0.8}>
         <View>
-          <View style={styles.imageContainer}>
-            <Image source={BlogPost.image} style={styles.image} />
-            <LinearGradient
-              colors={["#FFF0", "#FFF"]}
-              start={{ x: 0, y: 0.6 }}
-              style={styles.linearGradient}
-            ></LinearGradient>
-          </View>
+          {BlogPost.image ? (
+            <View style={styles.imageContainer}>
+              <Image
+                source={
+                  BlogPost.image
+                    ? { uri: BlogPost.image }
+                    : require("../assets/images/sadMan.jpg")
+                }
+                style={styles.image}
+              />
+              <LinearGradient
+                colors={["#FFF0", "#FFF"]}
+                start={{ x: 0, y: 0.6 }}
+                style={styles.linearGradient}
+              ></LinearGradient>
+            </View>
+          ) : null}
 
           <View style={styles.titleContainer}>
             <Text style={styles.title}>{BlogPost.title}</Text>
