@@ -4,6 +4,8 @@ const port = 3000;
 
 const app = express();
 
+app.use(express.json());
+
 app.get("/", (req, res) => {
   res.send("Hello world");
 });
@@ -26,6 +28,12 @@ app.get("/blogposts", (req, res) => {
   ];
 
   res.send({ BlogPosts });
+});
+
+app.post("/blogposts", (req, res) => {
+  const { Title, Description, Thumbnail } = req.body.BlogPost;
+
+  res.sendStatus(200);
 });
 
 app.listen(port);

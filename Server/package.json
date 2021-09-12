@@ -6,13 +6,14 @@
   "main": "./src/index.js",
   "scripts": {
     "start": "node src/index.js",
-    "dev": "nodemon src/index.js",
-    "tunnel": "lt --port 3000"
+    "dev": "set DEBUG=express:* & nodemon src/index.js",
+    "tunnel": "ngrok http -region=eu 3000"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
     "express": "^4.17.1",
+    "ngrok": "^4.2.2",
     "nodemon": "^2.0.12"
   }
 }
