@@ -15,3 +15,5 @@ web-build/
 App/environment.js
 
 Server/.env
+
+Server/UserFiles/Thumbnails/

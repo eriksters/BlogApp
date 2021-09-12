@@ -6,11 +6,44 @@ import axios from "axios";
 import getEnvVars from "../environment";
 
 const NewBlogPostScreen = () => {
-  const [thumbNailUri, setThumbNailUri] = useState(undefined);
+  const [thumbnailUri, setThumbNailUri] = useState(undefined);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
 
   const API_URL = getEnvVars().API_URL;
+
+  const api = axios.create({ baseURL: API_URL });
+
+  const onSavePress = () => {
+    const data = new FormData();
+
+    data.append("Thumbnail", {
+      name: thumbnailUri.substring(thumbnailUri.lastIndexOf("/") + 1),
+      type: "image/jpeg",
+      uri: thumbnailUri,
+    });
+
+    data.append(
+      "Data",
+      JSON.stringify({
+        Title: title,
+        Description: description,
+      })
+    );
+
+    api
+      .post("/blogposts", data, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      })
+      .then(() => {
+        console.log("Image uploaded successfully");
+      })
+      .catch((err) => {
+        console.error("Error uploading image", err);
+      });
+  };
 
   const onSelectPress = () => {
     DocumentPicker.getDocumentAsync({ type: "image/jpeg" }).then(
@@ -18,31 +51,26 @@ const NewBlogPostScreen = () => {
         if (uri !== undefined) {
           setThumbNailUri("file://" + uri);
         }
-        console.log(
-          "Image received. \nSize: " + size + "\nLocation: " + thumbNailUri
-        );
       }
     );
   };
 
-  const onSavePress = () => {
-    const api = axios.create({ baseURL: API_URL });
-
-    api
-      .post("/BlogPosts", {
-        BlogPost: {
-          Title: title,
-          Description: description,
-          ThumbnailURL: thumbNailUri,
-        },
-      })
-      .then(({ status }) => {
-        console.log("Done, status " + status);
-      })
-      .catch((err) => {
-        console.error("Error:\n" + err);
-      });
-  };
+  // const onSavePress = () => {
+  //   api
+  //     .post("/BlogPosts", {
+  //       BlogPost: {
+  //         Title: title,
+  //         Description: description,
+  //         ThumbnailURL: thumbnailUri,
+  //       },
+  //     })
+  //     .then(({ status }) => {
+  //       console.log("Done, status " + status);
+  //     })
+  //     .catch((err) => {
+  //       console.error("Error:\n" + err);
+  //     });
+  // };
 
   return (
     <View style={styles.container}>
@@ -68,12 +96,15 @@ const NewBlogPostScreen = () => {
       <Button icon='image' onPress={onSelectPress}>
         Select Thumbnail
       </Button>
-      {thumbNailUri !== undefined ? (
-        <Image source={{ uri: thumbNailUri }} style={styles.thumbnail} />
+      {thumbnailUri !== undefined ? (
+        <Image source={{ uri: thumbnailUri }} style={styles.thumbnail} />
       ) : null}
       <Button icon='content-save' onPress={onSavePress}>
         Save
       </Button>
+      {/* <Button icon='upload' onPress={onUploadPress}>
+        Upload
+      </Button> */}
     </View>
   );
 };
