@@ -33,7 +33,7 @@ const NewBlogPostScreen = () => {
         BlogPost: {
           Title: title,
           Description: description,
-          Thumbnail: thumbNailUri,
+          ThumbnailURL: thumbNailUri,
         },
       })
       .then(({ status }) => {

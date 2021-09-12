@@ -1,7 +1,28 @@
 import express from "express";
 
-const port = 3000;
+import * as dotenv from "dotenv";
+import mongoose from "mongoose";
 
+//  Dev env config
+dotenv.config();
+
+//  Mongoose config
+//  Generate the connection string
+const connectionString = process.env.DB_URL.replace(
+  "<username>",
+  process.env.DB_USERNAME
+).replace("<password>", process.env.DB_PASSWORD);
+
+const BlogPostSchema = new mongoose.Schema({
+  Title: String,
+  Description: String,
+  ThumbnailURL: String,
+});
+
+const BlogPostModel = mongoose.model("BlogPost", BlogPostSchema);
+
+//  Express config
+const port = 3000;
 const app = express();
 
 app.use(express.json());
@@ -10,6 +31,7 @@ app.get("/", (req, res) => {
   res.send("Hello world");
 });
 
+//  Routes
 app.get("/blogposts", (req, res) => {
   const BlogPosts = [
     {
@@ -30,10 +52,60 @@ app.get("/blogposts", (req, res) => {
   res.send({ BlogPosts });
 });
 
-app.post("/blogposts", (req, res) => {
-  const { Title, Description, Thumbnail } = req.body.BlogPost;
+app.post("/blogposts", async (req, res) => {
+  console.log("Creating new post");
 
+  const BlogPostModel = mongoose.model("BlogPost");
+  const NewPost = new BlogPostModel(req.body.BlogPost);
+
+  await NewPost.save();
+
+  console.log("Done creating new post");
   res.sendStatus(200);
 });
 
-app.listen(port);
+async function getPosts() {
+  const BlogPost = mongoose.model("BlogPost");
+
+  const query = BlogPost.find({});
+
+  console.error("Counting");
+  console.log(await query.count().exec());
+}
+
+async function createPost() {
+  console.log("creating new post");
+
+  const BlogPostModel = mongoose.model("BlogPost");
+
+  const newPost = new BlogPostModel({
+    Title: "Post through Mongoose",
+    Description: "Pretty amazed that this actually worked",
+    Image:
+      "https://www.pixsy.com/wp-content/uploads/2021/04/ben-sweet-2LowviVHZ-E-unsplash-1.jpeg",
+  });
+
+  newPost.save().then(() => {
+    console.log("Done creating post");
+  });
+}
+
+async function main() {
+  await mongoose
+    .connect(connectionString, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    })
+    .then(() => {
+      console.log("Database connection established");
+    })
+    .catch((err) => {
+      console.error("Database connection failed");
+    });
+
+  app.listen(port);
+}
+
+main().catch((err) => {
+  console.error("Crashed:\n" + error);
+});
