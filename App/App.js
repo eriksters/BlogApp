@@ -6,9 +6,11 @@ import {
   Baskervville_400Regular,
 } from "@expo-google-fonts/baskervville";
 import AppLoading from "expo-app-loading";
+import { Provider as PaperProvider } from "react-native-paper";
 
 import BlogPostListItem from "./Components/BlogPostListItem";
 import BlogPostList from "./Screens/BlogPostList";
+import NewBlogPostScreen from "./Screens/NewBlogPostScreen";
 
 export default function App() {
   let [fontsLoaded] = useFonts({
@@ -19,10 +21,16 @@ export default function App() {
     return <AppLoading />;
   } else {
     return (
-      <View style={styles.container}>
-        <BlogPostList />
+      <PaperProvider>
         <StatusBar style='auto' />
-      </View>
+        <NewBlogPostScreen />
+        {/* 
+        <View style={styles.container}>
+          <BlogPostList />
+          <StatusBar style='auto' />
+        </View> 
+        */}
+      </PaperProvider>
     );
   }
 }

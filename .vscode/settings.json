@@ -1,0 +1,35 @@
+{
+  "terminal.integrated.profiles.windows": {
+    "Tunnel": {
+      "source": "PowerShell",
+      "overrideName": true,
+      "icon":"milestone"
+    },
+    "Expo": {
+      "source": "PowerShell",
+      "overrideName": true,
+      "icon":"primitive-square"
+    },
+    "Express": {
+      "source": "PowerShell",
+      "overrideName": true,
+      "icon":"server"
+    },
+    "App": {
+      "source": "PowerShell",
+      "overrideName": true,
+      "icon":"console"
+    },
+    "Server": {
+      "source": "PowerShell",
+      "overrideName": true,
+      "icon":"console"
+    },
+    "MongoDb": {
+      "source": "PowerShell",
+      "overrideName": true,
+      "icon": "database"
+    },
+    "Command Prompt": null
+  }
+}
