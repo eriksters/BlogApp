@@ -103,10 +103,11 @@ app.post(
       const oldPath = req.files.Thumbnail[0].path;
       const fileExtension = oldPath.substring(oldPath.lastIndexOf("."));
       const newPath = `public/Thumbnails/${CreatedPost._id.toString()}${fileExtension}`;
-      await fs.rename(`${req.files.Thumbnail[0].path}`, newPath);
+      console.log(`Renaming ${oldPath} to ${newPath}`);
+      await fs.rename(oldPath, newPath);
 
       //  Save URL to DB
-      NewPost.ThumbnailURL = newPath;
+      NewPost.ThumbnailURL = newPath.substring(newPath.indexOf("/") + 1);
       await NewPost.save();
 
       // BlogPostModel.updateOne({})
