@@ -22,14 +22,13 @@ export default function App() {
   } else {
     return (
       <PaperProvider>
-        <StatusBar style='auto' />
-        <NewBlogPostScreen />
-        {/* 
+        {/* <StatusBar style='auto' />
+        <NewBlogPostScreen /> */}
+
         <View style={styles.container}>
           <BlogPostList />
           <StatusBar style='auto' />
-        </View> 
-        */}
+        </View>
       </PaperProvider>
     );
   }
@@ -39,7 +38,7 @@ const styles = StyleSheet.create({
   container: {
     paddingTop: 50,
     paddingHorizontal: 10,
-    // flex: 1,
+    flex: 1,
     backgroundColor: "#F0F0F0",
     alignItems: "center",
     justifyContent: "flex-start",

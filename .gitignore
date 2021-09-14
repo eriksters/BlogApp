@@ -17,3 +17,5 @@ App/environment.js
 Server/.env
 
 Server/UserFiles/Thumbnails/
+
+Server/public/Thumbnails/

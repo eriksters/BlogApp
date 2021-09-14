@@ -17,33 +17,41 @@ const BlogPostList = () => {
 
   useEffect(() => {
     api.get("/blogposts").then((response) => {
-      console.log(response.data.BlogPosts);
       setBlogPosts(response.data.BlogPosts);
     });
   }, []);
 
   return (
-    <View>
-      <Text>Posts</Text>
-      <FlatList
-        data={BlogPosts}
-        renderItem={({ item }) => {
-          return (
-            <View style={styles.itemWrapper}>
-              <BlogPostListItem BlogPost={item} />
-            </View>
-          );
-        }}
-        keyExtractor={(item) => item.title}
-        showsVerticalScrollIndicator={false}
-      />
+    <View style={styles.container}>
+      {BlogPosts.length > 0 ? (
+        <FlatList
+          data={BlogPosts}
+          renderItem={({ item }) => {
+            return (
+              <View style={styles.itemWrapper}>
+                <BlogPostListItem BlogPost={item} />
+              </View>
+            );
+          }}
+          keyExtractor={(item) => item.title}
+          showsVerticalScrollIndicator={false}
+        />
+      ) : (
+        <Text style={styles.emptyListText}>No posts to show</Text>
+      )}
     </View>
   );
 };
 
 const styles = StyleSheet.create({
+  container: {
+    width: "100%",
+  },
   itemWrapper: {
     marginBottom: 15,
+  },
+  emptyListText: {
+    textAlign: "center",
   },
 });
 export default BlogPostList;

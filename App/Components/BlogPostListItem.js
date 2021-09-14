@@ -13,22 +13,25 @@ import { useState } from "react";
 import { LinearGradient } from "expo-linear-gradient";
 import { Entypo } from "@expo/vector-icons";
 import Collapsible from "react-native-collapsible";
+import getEnvVars from "../environment";
 
 const BlogPostListItem = ({ BlogPost }) => {
   const [expanded, setExpanded] = useState(false);
+
+  const API_URL = getEnvVars().API_URL;
+
+  const getImageURL = (relativePath) => {
+    return `${API_URL}/${BlogPost.ThumbnailURL}`;
+  };
 
   return (
     <View style={styles.container}>
       <TouchableOpacity activeOpacity={0.8}>
         <View>
-          {BlogPost.image ? (
+          {BlogPost.ThumbnailURL ? (
             <View style={styles.imageContainer}>
               <Image
-                source={
-                  BlogPost.image
-                    ? { uri: BlogPost.image }
-                    : require("../assets/images/sadMan.jpg")
-                }
+                source={{ uri: getImageURL(BlogPost.ThumbnailURL) }}
                 style={styles.image}
               />
               <LinearGradient
@@ -40,7 +43,7 @@ const BlogPostListItem = ({ BlogPost }) => {
           ) : null}
 
           <View style={styles.titleContainer}>
-            <Text style={styles.title}>{BlogPost.title}</Text>
+            <Text style={styles.title}>{BlogPost.Title}</Text>
           </View>
         </View>
       </TouchableOpacity>
@@ -50,7 +53,7 @@ const BlogPostListItem = ({ BlogPost }) => {
         easing='quad'
         style={styles.collapsible}
       >
-        <Text style={styles.description}>{BlogPost.description}</Text>
+        <Text style={styles.description}>{BlogPost.Description}</Text>
       </Collapsible>
 
       <TouchableOpacity
