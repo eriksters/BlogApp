@@ -25,6 +25,7 @@ const BlogPostList = () => {
     <View style={styles.container}>
       {BlogPosts.length > 0 ? (
         <FlatList
+          contentContainerStyle={styles.list}
           data={BlogPosts}
           renderItem={({ item }) => {
             return (
@@ -46,6 +47,9 @@ const BlogPostList = () => {
 const styles = StyleSheet.create({
   container: {
     width: "100%",
+  },
+  list: {
+    paddingTop: 50,
   },
   itemWrapper: {
     marginBottom: 15,

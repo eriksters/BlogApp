@@ -10,6 +10,10 @@ import {
   Provider as PaperProvider,
   BottomNavigation,
 } from "react-native-paper";
+import { NavigationContainer } from "@react-navigation/native";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import { MaterialIcons } from "@expo/vector-icons";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 import BlogPostListItem from "./Components/BlogPostListItem";
 import BlogPostList from "./Screens/BlogPostList";
@@ -20,48 +24,82 @@ export default function App() {
     Baskervville_400Regular,
   });
 
-  const CreateBlogPostRoute = () => <NewBlogPostScreen />;
-  const BlogPostListRoute = () => <BlogPostList />;
+  const Tab = createBottomTabNavigator();
 
-  const [index, setIndex] = useState(0);
-  const [routes] = useState([
-    { key: "blogPostList", title: "List", icon: "view-list-outline" },
-    { key: "createBlogPost", title: "Create", icon: "plus-box" },
-  ]);
-
-  const renderScene = BottomNavigation.SceneMap({
-    blogPostList: BlogPostListRoute,
-    createBlogPost: CreateBlogPostRoute,
-  });
-
-  if (!fontsLoaded) {
-    return <AppLoading />;
-  } else {
-    return (
-      <PaperProvider>
-        <StatusBar style={styles.statusBar} translucent={true} />
-        {/* <View style={styles.container}> */}
-        <BottomNavigation
-          navigationState={{ index, routes }}
-          onIndexChange={setIndex}
-          renderScene={renderScene}
+  return (
+    <NavigationContainer>
+      <Tab.Navigator
+        initialRouteName={"List"}
+        screenOptions={{ headerShown: false }}
+      >
+        <Tab.Screen
+          name='List'
+          component={BlogPostList}
+          options={{
+            tabBarIcon: ({ color, size }) => (
+              <MaterialIcons name='view-list' size={size} color={color} />
+            ),
+          }}
         />
+        <Tab.Screen
+          name='Create'
+          component={NewBlogPostScreen}
+          options={{
+            tabBarIcon: ({ color, size }) => (
+              <MaterialCommunityIcons
+                name='plus-box'
+                size={size}
+                color={color}
+              />
+            ),
+          }}
+        />
+      </Tab.Navigator>
+    </NavigationContainer>
+  );
 
-        {/* </View> */}
-      </PaperProvider>
-    );
+  // const CreateBlogPostRoute = () => <NewBlogPostScreen />;
+  // const BlogPostListRoute = () => <BlogPostList />;
 
-    // <PaperProvider>
-    //   <StatusBar style='auto' />
-    //   <NewBlogPostScreen />
+  // const [index, setIndex] = useState(0);
+  // const [routes] = useState([
+  //   { key: "blogPostList", title: "List", icon: "view-list-outline" },
+  //   { key: "createBlogPost", title: "Create", icon: "plus-box" },
+  // ]);
 
-    //   <View style={styles.container}>
-    //     <BlogPostList />
-    //     <StatusBar style='auto' />
-    //   </View>
-    // </PaperProvider>
-    // );
-  }
+  // const renderScene = BottomNavigation.SceneMap({
+  //   blogPostList: BlogPostListRoute,
+  //   createBlogPost: CreateBlogPostRoute,
+  // });
+
+  // if (!fontsLoaded) {
+  //   return <AppLoading />;
+  // } else {
+  //   return (
+  //     <PaperProvider>
+  //       <StatusBar style={styles.statusBar} translucent={true} />
+  //       {/* <View style={styles.container}> */}
+  //       <BottomNavigation
+  //         navigationState={{ index, routes }}
+  //         onIndexChange={setIndex}
+  //         renderScene={renderScene}
+  //       />
+
+  //       {/* </View> */}
+  //     </PaperProvider>
+  //   );
+
+  // <PaperProvider>
+  //   <StatusBar style='auto' />
+  //   <NewBlogPostScreen />
+
+  //   <View style={styles.container}>
+  //     <BlogPostList />
+  //     <StatusBar style='auto' />
+  //   </View>
+  // </PaperProvider>
+  // );
+  // }
 }
 
 const styles = StyleSheet.create({
