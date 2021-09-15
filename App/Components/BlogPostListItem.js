@@ -17,7 +17,7 @@ import Collapsible from "react-native-collapsible";
 import getEnvVars from "../environment";
 import axios from "axios";
 
-const BlogPostListItem = ({ BlogPost }) => {
+const BlogPostListItem = ({ BlogPost, onDeleteCallback }) => {
   const [expanded, setExpanded] = useState(false);
 
   const API_URL = getEnvVars().API_URL;
@@ -40,6 +40,7 @@ const BlogPostListItem = ({ BlogPost }) => {
           api.delete("/blogposts/" + BlogPost._id).then((res) => {
             console.log(res);
           });
+          onDeleteCallback();
         },
       },
     ]);

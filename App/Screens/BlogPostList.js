@@ -14,23 +14,40 @@ const BlogPostList = () => {
   });
 
   const [BlogPosts, setBlogPosts] = useState([]);
+  const [refreshing, setRefreshing] = useState(true);
+
+  const fetchPosts = async () => {
+    setRefreshing(true);
+
+    const response = await api.get("/blogposts");
+
+    setBlogPosts(response.data.BlogPosts);
+    setRefreshing(false);
+  };
 
   useEffect(() => {
-    api.get("/blogposts").then((response) => {
-      setBlogPosts(response.data.BlogPosts);
-    });
+    fetchPosts();
   }, []);
+
+  const onRefresh = () => {
+    fetchPosts();
+  };
 
   return (
     <View style={styles.container}>
       {BlogPosts.length > 0 ? (
         <FlatList
+          refreshing={refreshing}
+          onRefresh={onRefresh}
           contentContainerStyle={styles.list}
           data={BlogPosts}
           renderItem={({ item }) => {
             return (
               <View style={styles.itemWrapper}>
-                <BlogPostListItem BlogPost={item} />
+                <BlogPostListItem
+                  BlogPost={item}
+                  onDeleteCallback={onRefresh}
+                />
               </View>
             );
           }}
