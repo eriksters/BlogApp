@@ -1,6 +1,7 @@
 import React, { useState } from "react";
-import { View, Text, StyleSheet, Image } from "react-native";
+import { View, Text, StyleSheet, Image, Alert } from "react-native";
 import * as DocumentPicker from "expo-document-picker";
+import * as ImagePicker from "expo-image-picker";
 import { Button, TextInput } from "react-native-paper";
 import axios from "axios";
 import getEnvVars from "../environment";
@@ -45,14 +46,20 @@ const NewBlogPostScreen = () => {
       });
   };
 
-  const onSelectPress = () => {
-    DocumentPicker.getDocumentAsync({ type: "image/jpeg" }).then(
-      ({ uri, size }) => {
-        if (uri !== undefined) {
-          setThumbNailUri("file://" + uri);
-        }
-      }
-    );
+  const onSelectPress = async () => {
+    const status = await ImagePicker.requestMediaLibraryPermissionsAsync();
+
+    if (!status.granted) {
+      Alert.alert("We need the permission to access your photos to do that");
+    } else {
+      const result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        allowsEditing: true,
+        aspect: [3, 1],
+      });
+
+      setThumbNailUri(result.uri);
+    }
   };
 
   // const onSavePress = () => {
