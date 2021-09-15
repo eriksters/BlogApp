@@ -34,7 +34,7 @@ const BlogPostList = () => {
               </View>
             );
           }}
-          keyExtractor={(item) => item.title}
+          keyExtractor={(item) => item._id}
           showsVerticalScrollIndicator={false}
         />
       ) : (
