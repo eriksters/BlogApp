@@ -76,7 +76,7 @@ app.get("/blogposts", async (req, res) => {
     // .sort({ Title: "ascending" })
     // .limit(20);
 
-    console.log("Received posts:\n", BlogPosts);
+    // console.log("Received posts:\n", BlogPosts);
 
     res.status(200).send({ BlogPosts });
   } catch (err) {
@@ -94,7 +94,7 @@ app.post(
     const BlogPostModel = mongoose.model("BlogPost");
     const NewPost = new BlogPostModel(BlogPostData);
 
-    console.log(BlogPostData);
+    // console.log(BlogPostData);
 
     try {
       const CreatedPost = await NewPost.save();
@@ -121,6 +121,33 @@ app.post(
   }
 );
 
+app.delete("/blogposts/:id", async (req, res) => {
+  const postId = req.params.id;
+
+  const Post = await BlogPostModel.findOne({ _id: postId });
+
+  console.log(Post);
+
+  if (Post === null) {
+    res.sendStatus(404);
+  } else {
+    try {
+      await fs.rm("public/" + Post.ThumbnailURL);
+    } catch (err) {
+      //  Handle file not deleted
+    }
+
+    const deleteResult = await BlogPostModel.deleteOne({ _id: postId }).exec();
+    // const deleteResult = { deletedCount: 1 };
+
+    if (deleteResult.deletedCount === 0) {
+      res.sendStatus(500);
+    } else {
+      res.sendStatus(200);
+    }
+  }
+});
+
 // app.post(
 //   "/upload",
 //   upload.fields([{ name: "photo" }, { name: "BlogPost" }]),
@@ -131,14 +158,14 @@ app.post(
 //   }
 // );
 
-async function getPosts() {
-  const BlogPost = mongoose.model("BlogPost");
+// async function getPosts() {
+//   const BlogPost = mongoose.model("BlogPost");
 
-  const query = BlogPost.find({});
+//   const query = BlogPost.find({});
 
-  console.error("Counting");
-  console.log(await query.count().exec());
-}
+//   console.error("Counting");
+//   console.log(await query.count().exec());
+// }
 
 async function main() {
   await mongoose

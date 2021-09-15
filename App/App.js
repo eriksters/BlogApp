@@ -26,37 +26,41 @@ export default function App() {
 
   const Tab = createBottomTabNavigator();
 
-  return (
-    <NavigationContainer>
-      <Tab.Navigator
-        initialRouteName={"List"}
-        screenOptions={{ headerShown: false }}
-      >
-        <Tab.Screen
-          name='List'
-          component={BlogPostList}
-          options={{
-            tabBarIcon: ({ color, size }) => (
-              <MaterialIcons name='view-list' size={size} color={color} />
-            ),
-          }}
-        />
-        <Tab.Screen
-          name='Create'
-          component={NewBlogPostScreen}
-          options={{
-            tabBarIcon: ({ color, size }) => (
-              <MaterialCommunityIcons
-                name='plus-box'
-                size={size}
-                color={color}
-              />
-            ),
-          }}
-        />
-      </Tab.Navigator>
-    </NavigationContainer>
-  );
+  if (fontsLoaded) {
+    return (
+      <NavigationContainer>
+        <Tab.Navigator
+          initialRouteName={"List"}
+          screenOptions={{ headerShown: false }}
+        >
+          <Tab.Screen
+            name='List'
+            component={BlogPostList}
+            options={{
+              tabBarIcon: ({ color, size }) => (
+                <MaterialIcons name='view-list' size={size} color={color} />
+              ),
+            }}
+          />
+          <Tab.Screen
+            name='Create'
+            component={NewBlogPostScreen}
+            options={{
+              tabBarIcon: ({ color, size }) => (
+                <MaterialCommunityIcons
+                  name='plus-box'
+                  size={size}
+                  color={color}
+                />
+              ),
+            }}
+          />
+        </Tab.Navigator>
+      </NavigationContainer>
+    );
+  } else {
+    return <AppLoading />;
+  }
 
   // const CreateBlogPostRoute = () => <NewBlogPostScreen />;
   // const BlogPostListRoute = () => <BlogPostList />;

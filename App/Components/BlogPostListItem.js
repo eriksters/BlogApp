@@ -8,20 +8,41 @@ import {
   TouchableHighlight,
   TouchableHighlightComponent,
   TouchableWithoutFeedback,
+  Alert,
 } from "react-native";
 import { useState } from "react";
 import { LinearGradient } from "expo-linear-gradient";
-import { Entypo } from "@expo/vector-icons";
+import { Entypo, MaterialIcons } from "@expo/vector-icons";
 import Collapsible from "react-native-collapsible";
 import getEnvVars from "../environment";
+import axios from "axios";
 
 const BlogPostListItem = ({ BlogPost }) => {
   const [expanded, setExpanded] = useState(false);
 
   const API_URL = getEnvVars().API_URL;
 
+  const api = axios.create({ baseURL: API_URL });
+
   const getImageURL = (relativePath) => {
     return `${API_URL}/${BlogPost.ThumbnailURL}`;
+  };
+
+  const onDeletePress = async () => {
+    console.log("alerting");
+    Alert.alert("Delete Post?", "Are you sure you want to do that?", [
+      {
+        text: "No",
+      },
+      {
+        text: "Yes",
+        onPress: () => {
+          api.delete("/blogposts/" + BlogPost._id).then((res) => {
+            console.log(res);
+          });
+        },
+      },
+    ]);
   };
 
   return (
@@ -54,6 +75,14 @@ const BlogPostListItem = ({ BlogPost }) => {
         style={styles.collapsible}
       >
         <Text style={styles.description}>{BlogPost.Description}</Text>
+        <View style={styles.optionsBar}>
+          <TouchableOpacity style={styles.option}>
+            <Entypo name='edit' size={24} color='#555' />
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.option} onPress={onDeletePress}>
+            <MaterialIcons name='delete' size={24} color='#555' />
+          </TouchableOpacity>
+        </View>
       </Collapsible>
 
       <TouchableOpacity
@@ -108,6 +137,16 @@ const styles = StyleSheet.create({
     borderTopWidth: 1,
     fontSize: 18,
     fontFamily: "Baskervville_400Regular",
+  },
+  optionsBar: {
+    flexDirection: "row",
+    justifyContent: "space-evenly",
+  },
+  option: {
+    paddingTop: 15,
+    justifyContent: "center",
+    flexGrow: 1,
+    alignItems: "center",
   },
   expandTouchArea: {
     paddingVertical: 5,
