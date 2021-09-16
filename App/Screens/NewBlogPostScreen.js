@@ -6,7 +6,7 @@ import { Button, TextInput } from "react-native-paper";
 import axios from "axios";
 import getEnvVars from "../environment";
 
-const NewBlogPostScreen = () => {
+const NewBlogPostScreen = ({ navigation, onSuccess }) => {
   const [thumbnailUri, setThumbNailUri] = useState(undefined);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -39,10 +39,11 @@ const NewBlogPostScreen = () => {
         },
       })
       .then(() => {
-        console.log("Image uploaded successfully");
+        console.log("Post Saved Successfully");
+        navigation.navigate({ name: "List", params: { NewPost: true } });
       })
       .catch((err) => {
-        console.error("Error uploading image", err);
+        console.error("Error Saving Post", err);
       });
   };
 

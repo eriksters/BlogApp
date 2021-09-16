@@ -19,3 +19,5 @@ Server/.env
 Server/UserFiles/Thumbnails/
 
 Server/public/Thumbnails/
+
+Server/Temp/

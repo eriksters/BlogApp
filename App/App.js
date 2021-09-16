@@ -18,6 +18,7 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import BlogPostListItem from "./Components/BlogPostListItem";
 import BlogPostList from "./Screens/BlogPostList";
 import NewBlogPostScreen from "./Screens/NewBlogPostScreen";
+import BlogPostListTab from "./Screens/BlogPostListTab";
 
 export default function App() {
   let [fontsLoaded] = useFonts({
@@ -34,8 +35,8 @@ export default function App() {
           screenOptions={{ headerShown: false }}
         >
           <Tab.Screen
-            name='List'
-            component={BlogPostList}
+            name='Posts'
+            component={BlogPostListTab}
             options={{
               tabBarIcon: ({ color, size }) => (
                 <MaterialIcons name='view-list' size={size} color={color} />
@@ -43,7 +44,7 @@ export default function App() {
             }}
           />
           <Tab.Screen
-            name='Create'
+            name='Remove Me!'
             component={NewBlogPostScreen}
             options={{
               tabBarIcon: ({ color, size }) => (

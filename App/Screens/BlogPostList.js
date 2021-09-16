@@ -4,8 +4,11 @@ import { useState, useEffect } from "react";
 import BlogPostListItem from "../Components/BlogPostListItem";
 import axios from "axios";
 import getEnvVars from "../environment";
+import { Colors, IconButton } from "react-native-paper";
+import { createStackNavigator } from "@react-navigation/stack";
+import NewBlogPostScreen from "./NewBlogPostScreen";
 
-const BlogPostList = () => {
+const BlogPostList = ({ navigation, route }) => {
   const ENV_VARS = getEnvVars();
   const API_URL = ENV_VARS.API_URL;
 
@@ -29,8 +32,19 @@ const BlogPostList = () => {
     fetchPosts();
   }, []);
 
+  useEffect(() => {
+    if (route.params?.NewPost) {
+      route.params.NewPost = false;
+      fetchPosts();
+    }
+  }, [route.params?.NewPost]);
+
   const onRefresh = () => {
     fetchPosts();
+  };
+
+  const onCreatePressed = () => {
+    navigation.navigate("Create");
   };
 
   return (
@@ -57,6 +71,13 @@ const BlogPostList = () => {
       ) : (
         <Text style={styles.emptyListText}>No posts to show</Text>
       )}
+      <IconButton
+        icon='plus-circle'
+        color={Colors.blue500}
+        size={60}
+        onPress={onCreatePressed}
+        style={styles.createButton}
+      />
     </View>
   );
 };
@@ -73,6 +94,11 @@ const styles = StyleSheet.create({
   },
   emptyListText: {
     textAlign: "center",
+  },
+  createButton: {
+    position: "absolute",
+    right: 8,
+    bottom: 8,
   },
 });
 export default BlogPostList;
