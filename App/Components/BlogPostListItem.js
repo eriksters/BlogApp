@@ -16,8 +16,11 @@ import { Entypo, MaterialIcons } from "@expo/vector-icons";
 import Collapsible from "react-native-collapsible";
 import getEnvVars from "../environment";
 import axios from "axios";
+import { useNavigation } from "@react-navigation/core";
 
 const BlogPostListItem = ({ BlogPost, onDeleteCallback }) => {
+  const navigation = useNavigation();
+
   const [expanded, setExpanded] = useState(false);
 
   const API_URL = getEnvVars().API_URL;
@@ -46,9 +49,13 @@ const BlogPostListItem = ({ BlogPost, onDeleteCallback }) => {
     ]);
   };
 
+  const onViewPressed = () => {
+    navigation.navigate({ name: "View", params: { BlogPost } });
+  };
+
   return (
     <View style={styles.container}>
-      <TouchableOpacity activeOpacity={0.8}>
+      <TouchableOpacity activeOpacity={0.8} onPress={onViewPressed}>
         <View>
           {BlogPost.ThumbnailURL ? (
             <View style={styles.imageContainer}>
