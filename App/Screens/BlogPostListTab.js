@@ -4,6 +4,7 @@ import { createStackNavigator } from "@react-navigation/stack";
 import NewBlogPostScreen from "./NewBlogPostScreen";
 import BlogPostList from "./BlogPostList";
 import ViewBlogPostScreen from "./ViewBlogPostScreen";
+import EditBlogPostScreen from "./EditBlogPostScreen";
 
 const BlogPostListTab = () => {
   const Stack = createStackNavigator();
@@ -13,6 +14,7 @@ const BlogPostListTab = () => {
       <Stack.Screen name='List' component={BlogPostList} />
       <Stack.Screen name='Create' component={NewBlogPostScreen} />
       <Stack.Screen name='View' component={ViewBlogPostScreen} />
+      <Stack.Screen name='Edit' component={EditBlogPostScreen} />
     </Stack.Navigator>
   );
 };

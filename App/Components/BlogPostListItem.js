@@ -45,6 +45,10 @@ const BlogPostListItem = ({ BlogPost, onDeleteCallback }) => {
     ]);
   };
 
+  const onEditPress = () => {
+    navigation.navigate({ name: "Edit", params: { BlogPost } });
+  };
+
   const onViewPressed = () => {
     navigation.navigate({ name: "View", params: { BlogPost } });
   };
@@ -80,7 +84,7 @@ const BlogPostListItem = ({ BlogPost, onDeleteCallback }) => {
       >
         <Text style={styles.description}>{BlogPost.Description}</Text>
         <View style={styles.optionsBar}>
-          <TouchableOpacity style={styles.option}>
+          <TouchableOpacity style={styles.option} onPress={onEditPress}>
             <Entypo name='edit' size={24} color='#555' />
           </TouchableOpacity>
           <TouchableOpacity style={styles.option} onPress={onDeletePress}>
