@@ -73,11 +73,14 @@ app.get("/blogposts", async (req, res) => {
   // ];
 
   try {
-    const BlogPosts = await BlogPostModel.find({}).exec();
+    let BlogPosts = await BlogPostModel.find({}).exec();
     // .sort({ Title: "ascending" })
     // .limit(20);
 
-    // console.log("Received posts:\n", BlogPosts);
+    BlogPosts.forEach(
+      (post) =>
+        (post.ThumbnailURL = `${process.env.SERVER_BASE_URL}/${post.ThumbnailURL}`)
+    );
 
     res.status(200).send({ BlogPosts });
   } catch (err) {

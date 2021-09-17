@@ -7,16 +7,9 @@ const ViewBlogPostScreen = ({ navigation, route }) => {
 
   const API_URL = getEnvVars().API_URL;
 
-  const getImageURL = (relativePath) => {
-    return `${API_URL}/${BlogPost.ThumbnailURL}`;
-  };
-
   return (
     <View style={styles.container}>
-      <Image
-        source={{ uri: getImageURL(BlogPost.ThumbnailURL) }}
-        style={styles.thumbnail}
-      />
+      <Image source={{ uri: BlogPost.ThumbnailURL }} style={styles.thumbnail} />
       <Text style={styles.title}>{BlogPost.Title}</Text>
       {BlogPost.Description ? (
         <Text style={styles.description}>{BlogPost.Description}</Text>

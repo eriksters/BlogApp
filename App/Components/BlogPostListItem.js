@@ -27,10 +27,6 @@ const BlogPostListItem = ({ BlogPost, onDeleteCallback }) => {
 
   const api = axios.create({ baseURL: API_URL });
 
-  const getImageURL = (relativePath) => {
-    return `${API_URL}/${BlogPost.ThumbnailURL}`;
-  };
-
   const onDeletePress = async () => {
     console.log("alerting");
     Alert.alert("Delete Post?", "Are you sure you want to do that?", [
@@ -60,7 +56,7 @@ const BlogPostListItem = ({ BlogPost, onDeleteCallback }) => {
           {BlogPost.ThumbnailURL ? (
             <View style={styles.imageContainer}>
               <Image
-                source={{ uri: getImageURL(BlogPost.ThumbnailURL) }}
+                source={{ uri: BlogPost.ThumbnailURL }}
                 style={styles.image}
               />
               <LinearGradient
