@@ -18,7 +18,10 @@ const ViewBlogPostScreen = ({ navigation, route }) => {
         style={styles.thumbnail}
       />
       <Text style={styles.title}>{BlogPost.Title}</Text>
-      <Text style={styles.description}>{BlogPost.Description}</Text>
+      {BlogPost.Description ? (
+        <Text style={styles.description}>{BlogPost.Description}</Text>
+      ) : null}
+      <Text style={styles.content}>{BlogPost.Content}</Text>
     </View>
   );
 };
@@ -27,6 +30,8 @@ const styles = StyleSheet.create({
   container: {
     paddingHorizontal: 8,
     paddingTop: 25,
+    flex: 1,
+    backgroundColor: "#fff",
   },
   thumbnail: {
     width: "100%",
@@ -37,7 +42,16 @@ const styles = StyleSheet.create({
     fontFamily: "Baskervville_400Regular",
   },
   description: {
+    marginTop: 10,
+    borderTopColor: "#DDD",
+    borderTopWidth: 1,
     fontSize: 20,
+    fontFamily: "Baskervville_400Regular",
+  },
+  content: {
+    marginTop: 10,
+    paddingTop: 5,
+    fontSize: 16,
     fontFamily: "Baskervville_400Regular",
   },
 });

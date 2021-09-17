@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, Text, StyleSheet, Image, Alert } from "react-native";
+import { View, ScrollView, Text, StyleSheet, Image, Alert } from "react-native";
 import * as DocumentPicker from "expo-document-picker";
 import * as ImagePicker from "expo-image-picker";
 import { Button, TextInput } from "react-native-paper";
@@ -10,12 +10,15 @@ const NewBlogPostScreen = ({ navigation, onSuccess }) => {
   const [thumbnailUri, setThumbNailUri] = useState(undefined);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
+  const [content, setContent] = useState("");
 
   const API_URL = getEnvVars().API_URL;
 
   const api = axios.create({ baseURL: API_URL });
 
   const onSavePress = () => {
+    console.log("Saving");
+
     const data = new FormData();
 
     data.append("Thumbnail", {
@@ -29,6 +32,7 @@ const NewBlogPostScreen = ({ navigation, onSuccess }) => {
       JSON.stringify({
         Title: title,
         Description: description,
+        Content: content,
       })
     );
 
@@ -63,56 +67,62 @@ const NewBlogPostScreen = ({ navigation, onSuccess }) => {
     }
   };
 
-  // const onSavePress = () => {
-  //   api
-  //     .post("/BlogPosts", {
-  //       BlogPost: {
-  //         Title: title,
-  //         Description: description,
-  //         ThumbnailURL: thumbnailUri,
-  //       },
-  //     })
-  //     .then(({ status }) => {
-  //       console.log("Done, status " + status);
-  //     })
-  //     .catch((err) => {
-  //       console.error("Error:\n" + err);
-  //     });
-  // };
-
   return (
     <View style={styles.container}>
-      <TextInput
-        label='Title'
-        mode='outlined'
-        style={styles.titleInput}
-        value={title}
-        onChangeText={(text) => {
-          setTitle(text);
-        }}
-      />
-      <TextInput
-        mode='outlined'
-        multiline={true}
-        numberOfLines={3}
-        label='Description'
-        value={description}
-        onChangeText={(text) => {
-          setDescription(text);
-        }}
-      />
-      <Button icon='image' onPress={onSelectPress}>
-        Select Thumbnail
-      </Button>
-      {thumbnailUri !== undefined ? (
-        <Image source={{ uri: thumbnailUri }} style={styles.thumbnail} />
-      ) : null}
-      <Button icon='content-save' onPress={onSavePress}>
+      <Button
+        mode='contained'
+        icon='content-save'
+        onPress={onSavePress}
+        style={styles.saveButton}
+      >
         Save
       </Button>
-      {/* <Button icon='upload' onPress={onUploadPress}>
-        Upload
-      </Button> */}
+      <ScrollView>
+        <TextInput
+          label='Title'
+          mode='outlined'
+          style={styles.titleInput}
+          value={title}
+          onChangeText={(text) => {
+            setTitle(text);
+          }}
+        />
+        <TextInput
+          mode='outlined'
+          multiline={true}
+          style={styles.descriptionInput}
+          numberOfLines={3}
+          label='Description'
+          value={description}
+          onChangeText={(text) => {
+            setDescription(text);
+          }}
+        />
+        <TextInput
+          mode='outlined'
+          multiline={true}
+          style={styles.contentInput}
+          numberOfLines={5}
+          label='Content'
+          value={content}
+          onChangeText={(text) => {
+            setContent(text);
+          }}
+        />
+        <Text style={styles.thumbnailSectionTitle}>Post Thumbnail</Text>
+        {thumbnailUri !== undefined ? (
+          <Image source={{ uri: thumbnailUri }} style={styles.thumbnail} />
+        ) : null}
+        <Button
+          style={styles.selectThumbnailButton}
+          icon='image'
+          onPress={onSelectPress}
+        >
+          Select
+        </Button>
+
+        <View style={styles.bottomPadding}></View>
+      </ScrollView>
     </View>
   );
 };
@@ -122,23 +132,38 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 5,
     paddingTop: 35,
+    backgroundColor: "#fff",
+  },
+  saveButton: {
+    position: "absolute",
+    bottom: 20,
+    alignSelf: "center",
+    justifyContent: "center",
+    height: 50,
+    width: "95%",
+    zIndex: 1,
+  },
+  thumbnailSectionTitle: {
+    fontSize: 16,
+    marginTop: 10,
+    alignSelf: "center",
+  },
+  selectThumbnailButton: {
+    marginTop: 10,
   },
   thumbnail: {
     width: "100%",
     height: 100,
+    marginTop: 5,
   },
-  // titleInput: {
-  //   // backgroundColor: "#EEE",
-  //   borderRadius: 8,
-  //   padding: 3,
-  //   fontSize: 16,
-  // },
-  // descriptionInput: {
-  //   backgroundColor: "#EEE",
-  //   borderRadius: 8,
-  //   padding: 3,
-  //   fontSize: 16,
-  //   textAlignVertical: "top",
-  // },
+  descriptionInput: {
+    marginTop: 5,
+  },
+  contentInput: {
+    marginTop: 5,
+  },
+  bottomPadding: {
+    height: 80,
+  },
 });
 export default NewBlogPostScreen;

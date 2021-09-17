@@ -37,6 +37,7 @@ const BlogPostSchema = new mongoose.Schema({
   Title: String,
   Description: String,
   ThumbnailURL: String,
+  Content: String,
 });
 
 const BlogPostModel = mongoose.model("BlogPost", BlogPostSchema);
