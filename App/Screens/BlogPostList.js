@@ -19,7 +19,7 @@ const BlogPostList = ({ navigation, route }) => {
   const [BlogPosts, setBlogPosts] = useState([]);
   const [refreshing, setRefreshing] = useState(true);
 
-  const fetchPosts = async () => {
+  const updatePosts = async () => {
     setRefreshing(true);
 
     const response = await api.get("/blogposts");
@@ -29,48 +29,53 @@ const BlogPostList = ({ navigation, route }) => {
   };
 
   useEffect(() => {
-    fetchPosts();
+    updatePosts();
   }, []);
 
   useEffect(() => {
     if (route.params?.NewPost) {
       route.params.NewPost = false;
-      fetchPosts();
+      updatePosts();
     }
   }, [route.params?.NewPost]);
 
   const onRefresh = () => {
-    fetchPosts();
+    updatePosts();
   };
 
   const onCreatePressed = () => {
     navigation.navigate("Create");
   };
 
+  const ListEmptyComponent = () => (
+    <View style={styles.emptyListContainer}>
+      <Text style={styles.emptyListText}>Nothing to show here</Text>
+      <Text style={styles.emptyListText}>Pull down to reload</Text>
+    </View>
+  );
+
   return (
     <View style={styles.container}>
-      {BlogPosts.length > 0 ? (
-        <FlatList
-          refreshing={refreshing}
-          onRefresh={onRefresh}
-          contentContainerStyle={styles.list}
-          data={BlogPosts}
-          renderItem={({ item }) => {
-            return (
-              <View style={styles.itemWrapper}>
-                <BlogPostListItem
-                  BlogPost={item}
-                  onDeleteCallback={onRefresh}
-                />
-              </View>
-            );
-          }}
-          keyExtractor={(item) => item._id}
-          showsVerticalScrollIndicator={false}
-        />
-      ) : (
+      {/* {BlogPosts.length > 0 ? ( */}
+      <FlatList
+        refreshing={refreshing}
+        onRefresh={onRefresh}
+        contentContainerStyle={styles.list}
+        data={BlogPosts}
+        renderItem={({ item }) => {
+          return (
+            <View style={styles.itemWrapper}>
+              <BlogPostListItem BlogPost={item} onDeleteCallback={onRefresh} />
+            </View>
+          );
+        }}
+        keyExtractor={(item) => item._id}
+        showsVerticalScrollIndicator={false}
+        ListEmptyComponent={ListEmptyComponent}
+      />
+      {/* ) : (
         <Text style={styles.emptyListText}>No posts to show</Text>
-      )}
+      )} */}
       <IconButton
         icon='plus-circle'
         color={Colors.blue500}
@@ -84,17 +89,21 @@ const BlogPostList = ({ navigation, route }) => {
 
 const styles = StyleSheet.create({
   container: {
-    width: "100%",
+    flex: 1,
   },
   list: {
     paddingTop: 50,
+    // flex: 1,
   },
   itemWrapper: {
     marginBottom: 15,
   },
-  emptyListText: {
-    textAlign: "center",
+  emptyListContainer: {
+    justifyContent: "center",
+    alignItems: "center",
+    flex: 1,
   },
+  emptyListText: {},
   createButton: {
     position: "absolute",
     right: 8,
