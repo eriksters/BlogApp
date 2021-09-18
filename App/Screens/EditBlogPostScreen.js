@@ -55,12 +55,9 @@ const EditBlogPostScreen = ({ navigation, route }) => {
     );
 
     try {
-      await api.put("/blogposts", data, {
+      await api.put("/blogposts/" + BlogPost._id, data, {
         headers: {
           "Content-Type": "multipart/form-data",
-        },
-        params: {
-          id: state._id,
         },
       });
 

@@ -8,6 +8,7 @@ import {
   TextInput,
   Colors,
   DefaultTheme,
+  HelperText,
 } from "react-native-paper";
 import axios from "axios";
 import getEnvVars from "../environment";
@@ -31,6 +32,24 @@ const BlogPostEditor = ({ State, update, onSave, saving }) => {
     }
   };
 
+  const [inputErrors, setInputErrors] = useState({});
+
+  const onSavePress = () => {
+    let err = {};
+
+    if (!State.Title) err = { ...err, Title: "*Title is required" };
+    if (!State.Content) err = { ...err, Content: "*Content is required" };
+    if (!State.ThumbnailURL)
+      err = { ...err, Thumbnail: "*Thumbnail is required" };
+
+    if (Object.keys(err).length === 0) {
+      onSave();
+    } else {
+      console.log("Errors:\n", err);
+      setInputErrors(err);
+    }
+  };
+
   return (
     <View style={styles.container}>
       <View style={styles.floatingContainer}>
@@ -38,7 +57,7 @@ const BlogPostEditor = ({ State, update, onSave, saving }) => {
           <Button
             mode='contained'
             icon='content-save'
-            onPress={onSave}
+            onPress={onSavePress}
             style={{
               ...styles.saveButton,
               backgroundColor: saving ? "#FFF2" : Colors.purple500,
@@ -70,6 +89,10 @@ const BlogPostEditor = ({ State, update, onSave, saving }) => {
             update({ type: "Title", payload: text });
           }}
         />
+        {inputErrors.Title ? (
+          <HelperText type='error'>{inputErrors.Title}</HelperText>
+        ) : null}
+
         <TextInput
           mode='outlined'
           multiline={true}
@@ -81,6 +104,7 @@ const BlogPostEditor = ({ State, update, onSave, saving }) => {
             update({ type: "Description", payload: text });
           }}
         />
+
         <TextInput
           mode='outlined'
           multiline={true}
@@ -92,6 +116,10 @@ const BlogPostEditor = ({ State, update, onSave, saving }) => {
             update({ type: "Content", payload: text });
           }}
         />
+        {inputErrors.Content ? (
+          <HelperText type='error'>{inputErrors.Content}</HelperText>
+        ) : null}
+
         <Text style={styles.thumbnailSectionTitle}>Post Thumbnail</Text>
         {State.ThumbnailURL !== undefined ? (
           <Image
@@ -107,6 +135,9 @@ const BlogPostEditor = ({ State, update, onSave, saving }) => {
         >
           Select
         </Button>
+        {inputErrors.Thumbnail ? (
+          <HelperText type='error'>{inputErrors.Thumbnail}</HelperText>
+        ) : null}
 
         <View style={styles.bottomPadding}></View>
       </ScrollView>
