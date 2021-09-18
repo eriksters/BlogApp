@@ -11,6 +11,7 @@ const EditBlogPostScreen = ({ navigation, route }) => {
 
   const [newThumbnail, setNewThumbnail] = useState(false);
   const [BlogPost, setBlogPost] = useState(route.params.BlogPost);
+  const [saving, setSaving] = useState(false);
 
   const reducer = (state, action) => {
     switch (action.type) {
@@ -31,6 +32,7 @@ const EditBlogPostScreen = ({ navigation, route }) => {
   const [state, dispatch] = useReducer(reducer, BlogPost);
 
   const onSave = async () => {
+    setSaving(true);
     const data = new FormData();
 
     if (newThumbnail) {
@@ -65,9 +67,17 @@ const EditBlogPostScreen = ({ navigation, route }) => {
       console.error("Error Saving Post", err);
       //  TODO: handle error while saving
     }
+    setSaving(false);
   };
 
-  return <BlogPostEditor State={state} update={dispatch} onSave={onSave} />;
+  return (
+    <BlogPostEditor
+      State={state}
+      update={dispatch}
+      onSave={onSave}
+      saving={saving}
+    />
+  );
 };
 
 const styles = StyleSheet.create({});

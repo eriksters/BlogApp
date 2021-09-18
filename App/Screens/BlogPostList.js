@@ -95,13 +95,6 @@ const BlogPostList = ({ navigation, route }) => {
         onPress={onCreatePressed}
         style={styles.createButton}
       />
-      <IconButton
-        icon='plus-circle'
-        color={Colors.blue500}
-        size={60}
-        onPress={getMorePosts}
-        style={styles.testButton}
-      />
     </View>
   );
 };
@@ -126,11 +119,6 @@ const styles = StyleSheet.create({
   createButton: {
     position: "absolute",
     right: 8,
-    bottom: 8,
-  },
-  testButton: {
-    position: "absolute",
-    left: 8,
     bottom: 8,
   },
 });
