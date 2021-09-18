@@ -54,6 +54,7 @@ const BlogPostSchema = new mongoose.Schema({
   Description: String,
   ThumbnailURL: String,
   Content: String,
+  CreateTime: Date,
 });
 
 const BlogPostModel = mongoose.model("BlogPost", BlogPostSchema);
@@ -89,7 +90,9 @@ app.get("/blogposts", async (req, res) => {
   // ];
 
   try {
-    let BlogPosts = await BlogPostModel.find({}).exec();
+    let BlogPosts = await BlogPostModel.find({})
+      .sort({ CreateTime: "descending" })
+      .exec();
     // .sort({ Title: "ascending" })
     // .limit(20);
 
@@ -110,6 +113,7 @@ app.post(
   upload.fields([{ name: "Thumbnail" }, { name: "Data" }]),
   async (req, res) => {
     const BlogPostData = JSON.parse(req.body.Data);
+    BlogPostData.CreateTime = Date.now();
 
     const BlogPostModel = mongoose.model("BlogPost");
     const NewPost = new BlogPostModel(BlogPostData);
