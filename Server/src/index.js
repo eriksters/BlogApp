@@ -65,11 +65,11 @@ const app = express();
 
 app.use(express.json());
 
+//  Routes
 app.get("/", (req, res) => {
   res.send("Hello world");
 });
 
-//  Routes
 app.use(express.static(path.resolve() + "\\public"));
 
 app.get("/blogposts", async (req, res) => {
@@ -89,12 +89,18 @@ app.get("/blogposts", async (req, res) => {
   //   },
   // ];
 
+  const lastPostTime = req.query.lastPostTime
+    ? req.query.lastPostTime
+    : Date.now();
+
   try {
-    let BlogPosts = await BlogPostModel.find({})
+    let BlogPosts = await BlogPostModel.find({
+      CreateTime: { $lt: lastPostTime },
+    })
+      .where()
       .sort({ CreateTime: "descending" })
+      .limit(10)
       .exec();
-    // .sort({ Title: "ascending" })
-    // .limit(20);
 
     BlogPosts.forEach(
       (post) =>

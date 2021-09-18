@@ -28,6 +28,17 @@ const BlogPostList = ({ navigation, route }) => {
     setRefreshing(false);
   };
 
+  const getMorePosts = async () => {
+    setRefreshing(true);
+
+    const response = await api.get("/blogposts", {
+      params: { lastPostTime: BlogPosts[BlogPosts.length - 1].CreateTime },
+    });
+
+    setBlogPosts([...BlogPosts, ...response.data.BlogPosts]);
+    setRefreshing(false);
+  };
+
   useEffect(() => {
     updatePosts();
   }, []);
@@ -72,6 +83,7 @@ const BlogPostList = ({ navigation, route }) => {
         keyExtractor={(item) => item._id}
         showsVerticalScrollIndicator={false}
         ListEmptyComponent={ListEmptyComponent}
+        onEndReached={getMorePosts}
       />
       {/* ) : (
         <Text style={styles.emptyListText}>No posts to show</Text>
@@ -82,6 +94,13 @@ const BlogPostList = ({ navigation, route }) => {
         size={60}
         onPress={onCreatePressed}
         style={styles.createButton}
+      />
+      <IconButton
+        icon='plus-circle'
+        color={Colors.blue500}
+        size={60}
+        onPress={getMorePosts}
+        style={styles.testButton}
       />
     </View>
   );
@@ -107,6 +126,11 @@ const styles = StyleSheet.create({
   createButton: {
     position: "absolute",
     right: 8,
+    bottom: 8,
+  },
+  testButton: {
+    position: "absolute",
+    left: 8,
     bottom: 8,
   },
 });
