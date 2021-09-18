@@ -50,6 +50,13 @@ const BlogPostList = ({ navigation, route }) => {
     }
   }, [route.params?.NewPost]);
 
+  useEffect(() => {
+    if (route.params?.UpdatedPost) {
+      route.params.UpdatedPost = false;
+      updatePosts();
+    }
+  }, [route.params?.UpdatedPost]);
+
   const onRefresh = () => {
     updatePosts();
   };
@@ -67,7 +74,6 @@ const BlogPostList = ({ navigation, route }) => {
 
   return (
     <View style={styles.container}>
-      {/* {BlogPosts.length > 0 ? ( */}
       <FlatList
         refreshing={refreshing}
         onRefresh={onRefresh}
@@ -85,9 +91,6 @@ const BlogPostList = ({ navigation, route }) => {
         ListEmptyComponent={ListEmptyComponent}
         onEndReached={getMorePosts}
       />
-      {/* ) : (
-        <Text style={styles.emptyListText}>No posts to show</Text>
-      )} */}
       <IconButton
         icon='plus-circle'
         color={Colors.blue500}
@@ -105,7 +108,6 @@ const styles = StyleSheet.create({
   },
   list: {
     paddingTop: 50,
-    // flex: 1,
   },
   itemWrapper: {
     marginBottom: 15,

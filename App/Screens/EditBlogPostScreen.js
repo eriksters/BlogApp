@@ -55,17 +55,19 @@ const EditBlogPostScreen = ({ navigation, route }) => {
     );
 
     try {
-      await api.put("/blogposts/" + state._id, data, {
+      await api.put("/blogposts", data, {
         headers: {
           "Content-Type": "multipart/form-data",
+        },
+        params: {
+          id: state._id,
         },
       });
 
       console.log("Post Saved Successfully");
-      navigation.navigate({ name: "List", params: { NewPost: true } });
+      navigation.navigate({ name: "List", params: { UpdatedPost: true } });
     } catch (err) {
       console.error("Error Saving Post", err);
-      //  TODO: handle error while saving
     }
     setSaving(false);
   };

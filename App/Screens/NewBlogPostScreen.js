@@ -1,20 +1,72 @@
-import React, { useState } from "react";
+import React, { useState, useReducer } from "react";
 import { View, ScrollView, Text, StyleSheet, Image, Alert } from "react-native";
 import * as DocumentPicker from "expo-document-picker";
 import * as ImagePicker from "expo-image-picker";
 import { Button, TextInput } from "react-native-paper";
 import axios from "axios";
 import getEnvVars from "../environment";
+import BlogPostEditor from "../Components/BlogPostEditor";
 
-const NewBlogPostScreen = ({ navigation, onSuccess }) => {
-  const [thumbnailUri, setThumbNailUri] = useState(undefined);
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
-  const [content, setContent] = useState("");
-
+const NewBlogPostScreen = ({ navigation, route, onSuccess }) => {
   const API_URL = getEnvVars().API_URL;
 
   const api = axios.create({ baseURL: API_URL });
+
+  const [BlogPost, setBlogPost] = useState({});
+  const [saving, setSaving] = useState(false);
+
+  const reducer = (state, action) => {
+    switch (action.type) {
+      case "Title":
+        return { ...state, Title: action.payload };
+      case "Description":
+        return { ...state, Description: action.payload };
+      case "Content":
+        return { ...state, Content: action.payload };
+      case "ThumbnailURL":
+        return { ...state, ThumbnailURL: action.payload };
+      default:
+        return state;
+    }
+  };
+
+  const [state, dispatch] = useReducer(reducer, BlogPost);
+
+  const onSave = async () => {
+    setSaving(true);
+    const data = new FormData();
+
+    data.append("Thumbnail", {
+      name: state.ThumbnailURL.substring(
+        state.ThumbnailURL.lastIndexOf("/") + 1
+      ),
+      type: "image/jpeg",
+      uri: state.ThumbnailURL,
+    });
+
+    data.append(
+      "Data",
+      JSON.stringify({
+        Title: state.Title,
+        Description: state.Description,
+        Content: state.Content,
+      })
+    );
+
+    try {
+      await api.post("/blogposts", data, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+
+      console.log("Post Saved Successfully");
+      navigation.navigate({ name: "List", params: { NewPost: true } });
+    } catch (err) {
+      console.error("Error Saving Post", err);
+    }
+    setSaving(false);
+  };
 
   const onSavePress = () => {
     console.log("Saving");
@@ -51,119 +103,13 @@ const NewBlogPostScreen = ({ navigation, onSuccess }) => {
       });
   };
 
-  const onSelectPress = async () => {
-    const status = await ImagePicker.requestMediaLibraryPermissionsAsync();
-
-    if (!status.granted) {
-      Alert.alert("We need the permission to access your photos to do that");
-    } else {
-      const result = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ImagePicker.MediaTypeOptions.Images,
-        allowsEditing: true,
-        aspect: [3, 1],
-      });
-
-      setThumbNailUri(result.uri);
-    }
-  };
-
   return (
-    <View style={styles.container}>
-      <Button
-        mode='contained'
-        icon='content-save'
-        onPress={onSavePress}
-        style={styles.saveButton}
-      >
-        Save
-      </Button>
-      <ScrollView>
-        <TextInput
-          label='Title'
-          mode='outlined'
-          style={styles.titleInput}
-          value={title}
-          onChangeText={(text) => {
-            setTitle(text);
-          }}
-        />
-        <TextInput
-          mode='outlined'
-          multiline={true}
-          style={styles.descriptionInput}
-          numberOfLines={3}
-          label='Description'
-          value={description}
-          onChangeText={(text) => {
-            setDescription(text);
-          }}
-        />
-        <TextInput
-          mode='outlined'
-          multiline={true}
-          style={styles.contentInput}
-          numberOfLines={5}
-          label='Content'
-          value={content}
-          onChangeText={(text) => {
-            setContent(text);
-          }}
-        />
-        <Text style={styles.thumbnailSectionTitle}>Post Thumbnail</Text>
-        {thumbnailUri !== undefined ? (
-          <Image source={{ uri: thumbnailUri }} style={styles.thumbnail} />
-        ) : null}
-        <Button
-          style={styles.selectThumbnailButton}
-          icon='image'
-          onPress={onSelectPress}
-        >
-          Select
-        </Button>
-
-        <View style={styles.bottomPadding}></View>
-      </ScrollView>
-    </View>
+    <BlogPostEditor
+      State={state}
+      update={dispatch}
+      onSave={onSave}
+      saving={saving}
+    />
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 5,
-    paddingTop: 35,
-    backgroundColor: "#fff",
-  },
-  saveButton: {
-    position: "absolute",
-    bottom: 20,
-    alignSelf: "center",
-    justifyContent: "center",
-    height: 50,
-    width: "95%",
-    zIndex: 1,
-  },
-  thumbnailSectionTitle: {
-    fontSize: 16,
-    marginTop: 10,
-    alignSelf: "center",
-  },
-  selectThumbnailButton: {
-    marginTop: 10,
-  },
-  thumbnail: {
-    width: "100%",
-    height: 100,
-    marginTop: 5,
-  },
-  descriptionInput: {
-    marginTop: 5,
-  },
-  contentInput: {
-    marginTop: 5,
-  },
-  bottomPadding: {
-    height: 80,
-  },
-});
 export default NewBlogPostScreen;
