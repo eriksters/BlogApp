@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import BlogPostListItem from "../Components/BlogPostListItem";
 import axios from "axios";
 import getEnvVars from "../environment";
-import { Colors, IconButton } from "react-native-paper";
+import { ActivityIndicator, Colors, IconButton } from "react-native-paper";
 import { createStackNavigator } from "@react-navigation/stack";
 import NewBlogPostScreen from "./NewBlogPostScreen";
 
@@ -18,6 +18,7 @@ const BlogPostList = ({ navigation, route }) => {
 
   const [BlogPosts, setBlogPosts] = useState([]);
   const [refreshing, setRefreshing] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
 
   const updatePosts = async () => {
     setRefreshing(true);
@@ -29,14 +30,14 @@ const BlogPostList = ({ navigation, route }) => {
   };
 
   const getMorePosts = async () => {
-    setRefreshing(true);
+    setLoadingMore(true);
 
     const response = await api.get("/blogposts", {
       params: { lastPostTime: BlogPosts[BlogPosts.length - 1].CreateTime },
     });
 
     setBlogPosts([...BlogPosts, ...response.data.BlogPosts]);
-    setRefreshing(false);
+    setLoadingMore(false);
   };
 
   useEffect(() => {
@@ -72,6 +73,19 @@ const BlogPostList = ({ navigation, route }) => {
     </View>
   );
 
+  const ListFooterComponent = () => (
+    <View style={styles.footer}>
+      <ActivityIndicator
+        style={styles.loadingMoreIndicator}
+        size={24}
+        animating={loadingMore}
+        color={Colors.deepPurple500}
+      />
+    </View>
+  );
+
+  const ItemSeparatorComponent = () => <View style={styles.itemSeparator} />;
+
   return (
     <View style={styles.container}>
       <FlatList
@@ -81,15 +95,15 @@ const BlogPostList = ({ navigation, route }) => {
         data={BlogPosts}
         renderItem={({ item }) => {
           return (
-            <View style={styles.itemWrapper}>
-              <BlogPostListItem BlogPost={item} onDeleteCallback={onRefresh} />
-            </View>
+            <BlogPostListItem BlogPost={item} onDeleteCallback={onRefresh} />
           );
         }}
         keyExtractor={(item) => item._id}
         showsVerticalScrollIndicator={false}
         ListEmptyComponent={ListEmptyComponent}
+        ListFooterComponent={ListFooterComponent}
         onEndReached={getMorePosts}
+        ItemSeparatorComponent={ItemSeparatorComponent}
       />
       <IconButton
         icon='plus-circle'
@@ -112,10 +126,21 @@ const styles = StyleSheet.create({
   itemWrapper: {
     marginBottom: 15,
   },
+  itemSeparator: {
+    height: 10,
+  },
   emptyListContainer: {
     justifyContent: "center",
     alignItems: "center",
     flex: 1,
+  },
+  footer: {
+    marginVertical: 20,
+    paddingVertical: 0,
+  },
+  loadingMoreIndicator: {
+    marginVertical: 0,
+    paddingVertical: 0,
   },
   emptyListText: {},
   createButton: {
