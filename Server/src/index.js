@@ -6,7 +6,7 @@ import * as fs from "fs/promises";
 import * as path from "path";
 
 //  Dev env config
-dotenv.config();
+const configOut = dotenv.config();
 
 //  Multer Config
 const storage = multer.diskStorage({
@@ -141,7 +141,8 @@ app.post(
     const newPath = await saveMulterFile(
       req.files.Thumbnail[0],
       `${process.env.SERVER_FILE_DIR}/Thumbnails`,
-      CreatedPost._id.toString()
+      // CreatedPost._id.toString()
+      `Thumb_${Math.floor(Math.random() * 10000)}_${Date.now()}`
     );
 
     // const oldPath = req.files.Thumbnail[0].path;
@@ -168,7 +169,10 @@ app.put(
     const id = req.params.id;
     const UpdatedPost = JSON.parse(req.body.Data);
     let OldPost = null;
-    let thumbnailURL = null;
+    // let thumbnailURL = null;
+
+    console.log("Image:\n", req.files.Thumbnail, "\n/Image");
+    console.log("Post:\n", UpdatedPost, "\n/Post");
 
     try {
       OldPost = await BlogPostModel.findById(id);
@@ -190,23 +194,20 @@ app.put(
         console.error("Could not delete old thumbnail\n", err);
       }
       try {
-        thumbnailURL = await saveMulterFile(
+        const thumbnailURL = await saveMulterFile(
           req.files.Thumbnail[0],
           `${process.env.SERVER_FILE_DIR}/Thumbnails`,
-          OldPost._id
+          `Thumb_${Math.floor(Math.random() * 10000)}_${Date.now()}`
+        );
+        UpdatedPost.ThumbnailURL = thumbnailURL.substring(
+          thumbnailURL.indexOf("/") + 1
         );
       } catch (err) {
         console.error("Could not save new thumbnail\n", err);
       }
     } else {
-      thumbnailURL = OldPost.ThumbnailURL;
+      UpdatedPost.ThumbnailURL = OldPost.ThumbnailURL;
     }
-
-    UpdatedPost.ThumbnailURL = thumbnailURL.substring(
-      thumbnailURL.indexOf("/") + 1
-    );
-
-    // console.log({ ...OldPost, ...UpdatedPost });
 
     await BlogPostModel.updateOne({ _id: id }, UpdatedPost); // { ...OldPost, UpdatedPost });
 
