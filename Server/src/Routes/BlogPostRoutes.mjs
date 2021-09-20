@@ -9,6 +9,7 @@ import * as path from "path";
 const configOut = dotenv.config();
 
 //  Multer Config
+//  Saves the incoming file to Temp dir with a randomly assigned name, keeping the file extension
 const storage = multer.diskStorage({
   destination(req, file, callback) {
     callback(null, "Temp");
@@ -23,9 +24,10 @@ const storage = multer.diskStorage({
     );
   },
 });
-
 const upload = multer({ storage });
 
+//  Permanently save a file to specified dir and with specified name.
+//  Preserves the file extension
 const saveMulterFile = async (file, dir, name) => {
   const oldPath = file.path;
   const fileExtension = oldPath.substring(oldPath.lastIndexOf("."));
@@ -59,36 +61,12 @@ const BlogPostSchema = new mongoose.Schema({
 
 const BlogPostModel = mongoose.model("BlogPost", BlogPostSchema);
 
-//  Express config
-const port = 3000;
-const app = express();
+//  Express
+const BlogPostRoutes = express.Router();
 
-app.use(express.json());
-
-//  Routes
-app.get("/", (req, res) => {
-  res.send("Hello world");
-});
-
-app.use(express.static(path.resolve() + "\\public"));
-
-app.get("/blogposts", async (req, res) => {
-  // const BlogPosts = [
-  //   {
-  //     title: "Post from the net",
-  //     description: "Welcome to the internet. Come and take a seat.",
-  //     image:
-  //       "https://www.pixsy.com/wp-content/uploads/2021/04/ben-sweet-2LowviVHZ-E-unsplash-1.jpeg",
-  //   },
-  //   {
-  //     title:
-  //       "Testing whether massive amounts of caffeine increase productivity?",
-  //     description: "I see time!",
-  //     image:
-  //       "https://wompampsupport.azureedge.net/fetchimage?siteId=7716&url=https%3A%2F%2Fwww.cancer.org%2Fcontent%2Fdam%2Fcancer-org%2Fimages%2Fphotographs%2Fsingle-use%2Fespresso-coffee-cup-with-beans-on-table-restricted.jpg%2Fjcr%3Acontent%2Frenditions%2Fcq5dam.web.1280.1280.jpeg",
-  //   },
-  // ];
-
+//  Get 10 newest Blog Posts
+//  If lastPostTime is specified, returns posts that are older than the specified time
+BlogPostRoutes.get("/", async (req, res) => {
   const lastPostTime = req.query.lastPostTime
     ? req.query.lastPostTime
     : Date.now();
@@ -114,7 +92,7 @@ app.get("/blogposts", async (req, res) => {
   }
 });
 
-app.post(
+BlogPostRoutes.post(
   "/blogposts",
   upload.fields([{ name: "Thumbnail" }, { name: "Data" }]),
   async (req, res) => {
@@ -123,8 +101,6 @@ app.post(
 
     const BlogPostModel = mongoose.model("BlogPost");
     const NewPost = new BlogPostModel(BlogPostData);
-
-    // console.log(BlogPostData);
 
     let CreatedPost;
     try {
@@ -141,38 +117,24 @@ app.post(
     const newPath = await saveMulterFile(
       req.files.Thumbnail[0],
       `${process.env.SERVER_FILE_DIR}/Thumbnails`,
-      // CreatedPost._id.toString()
       `Thumb_${Math.floor(Math.random() * 10000)}_${Date.now()}`
     );
-
-    // const oldPath = req.files.Thumbnail[0].path;
-    // const fileExtension = oldPath.substring(oldPath.lastIndexOf("."));
-    // const newPath = `public/Thumbnails/${CreatedPost._id.toString()}${fileExtension}`;
-    // console.log(`Renaming ${oldPath} to ${newPath}`);
-    // await fs.rename(oldPath, newPath);
 
     //  Save URL to DB
     NewPost.ThumbnailURL = newPath.substring(newPath.indexOf("/") + 1);
     await NewPost.save();
 
-    // BlogPostModel.updateOne({})
-
-    // console.log("Done creating new post", CreatedPost._id.toString());
     res.sendStatus(200);
   }
 );
 
-app.put(
+BlogPostRoutes.put(
   "/blogposts/:id",
   upload.fields([{ name: "Thumbnail" }, { name: "Data" }]),
   async (req, res) => {
     const id = req.params.id;
     const UpdatedPost = JSON.parse(req.body.Data);
     let OldPost = null;
-    // let thumbnailURL = null;
-
-    console.log("Image:\n", req.files.Thumbnail, "\n/Image");
-    console.log("Post:\n", UpdatedPost, "\n/Post");
 
     try {
       OldPost = await BlogPostModel.findById(id);
@@ -186,13 +148,17 @@ app.put(
       res.sendStatus(500);
     }
 
-    //  If the request includes a new image, delete the old one and replace with new
+    //  If the request includes a new thumbnail, delete the old one and replace with new.
+    //  If not, use the old thumbnail URL
     if (req.files.Thumbnail) {
+      //  Delete old
       try {
         await fs.rm(`${process.env.SERVER_FILE_DIR}/${OldPost.ThumbnailURL}`);
       } catch (err) {
         console.error("Could not delete old thumbnail\n", err);
       }
+
+      //  Save new
       try {
         const thumbnailURL = await saveMulterFile(
           req.files.Thumbnail[0],
@@ -209,13 +175,13 @@ app.put(
       UpdatedPost.ThumbnailURL = OldPost.ThumbnailURL;
     }
 
-    await BlogPostModel.updateOne({ _id: id }, UpdatedPost); // { ...OldPost, UpdatedPost });
+    await BlogPostModel.updateOne({ _id: id }, UpdatedPost);
 
     res.sendStatus(200);
   }
 );
 
-app.delete("/blogposts/:id", async (req, res) => {
+BlogPostRoutes.delete("/blogposts/:id", async (req, res) => {
   const postId = req.params.id;
 
   const Post = await BlogPostModel.findOne({ _id: postId });
@@ -232,7 +198,6 @@ app.delete("/blogposts/:id", async (req, res) => {
     }
 
     const deleteResult = await BlogPostModel.deleteOne({ _id: postId }).exec();
-    // const deleteResult = { deletedCount: 1 };
 
     if (deleteResult.deletedCount === 0) {
       res.sendStatus(500);
@@ -242,41 +207,4 @@ app.delete("/blogposts/:id", async (req, res) => {
   }
 });
 
-// app.post(
-//   "/upload",
-//   upload.fields([{ name: "photo" }, { name: "BlogPost" }]),
-//   (req, res) => {
-//     console.log("file", req.files);
-//     console.log(req.body);
-//     res.sendStatus(200);
-//   }
-// );
-
-// async function getPosts() {
-//   const BlogPost = mongoose.model("BlogPost");
-
-//   const query = BlogPost.find({});
-
-//   console.error("Counting");
-//   console.log(await query.count().exec());
-// }
-
-async function main() {
-  await mongoose
-    .connect(connectionString, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-    })
-    .then(() => {
-      console.log("Database connection established");
-    })
-    .catch((err) => {
-      console.error("Database connection failed");
-    });
-
-  app.listen(port);
-}
-
-main().catch((err) => {
-  console.error("Crashed:\n" + error);
-});
+export default BlogPostRoutes;
