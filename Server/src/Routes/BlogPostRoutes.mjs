@@ -5,9 +5,6 @@ import multer from "multer";
 import * as fs from "fs/promises";
 import * as path from "path";
 
-//  Dev env config
-const configOut = dotenv.config();
-
 //  Multer Config
 //  Saves the incoming file to Temp dir with a randomly assigned name, keeping the file extension
 const storage = multer.diskStorage({
@@ -44,22 +41,7 @@ const saveMulterFile = async (file, dir, name) => {
   return newPath;
 };
 
-//  Mongoose config
-//  Generate the connection string
-const connectionString = process.env.DB_URL.replace(
-  "<username>",
-  process.env.DB_USERNAME
-).replace("<password>", process.env.DB_PASSWORD);
-
-const BlogPostSchema = new mongoose.Schema({
-  Title: String,
-  Description: String,
-  ThumbnailURL: String,
-  Content: String,
-  CreateTime: Date,
-});
-
-const BlogPostModel = mongoose.model("BlogPost", BlogPostSchema);
+const BlogPostModel = mongoose.model("BlogPost");
 
 //  Express
 const BlogPostRoutes = express.Router();
@@ -93,7 +75,7 @@ BlogPostRoutes.get("/", async (req, res) => {
 });
 
 BlogPostRoutes.post(
-  "/blogposts",
+  "/",
   upload.fields([{ name: "Thumbnail" }, { name: "Data" }]),
   async (req, res) => {
     const BlogPostData = JSON.parse(req.body.Data);
@@ -129,7 +111,7 @@ BlogPostRoutes.post(
 );
 
 BlogPostRoutes.put(
-  "/blogposts/:id",
+  "/:id",
   upload.fields([{ name: "Thumbnail" }, { name: "Data" }]),
   async (req, res) => {
     const id = req.params.id;
@@ -181,7 +163,7 @@ BlogPostRoutes.put(
   }
 );
 
-BlogPostRoutes.delete("/blogposts/:id", async (req, res) => {
+BlogPostRoutes.delete("/:id", async (req, res) => {
   const postId = req.params.id;
 
   const Post = await BlogPostModel.findOne({ _id: postId });

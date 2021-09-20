@@ -3,10 +3,10 @@
   "version": "1.0.0",
   "description": "",
   "type": "module",
-  "main": "./src/index.mjs",
+  "main": "./src/App.mjs",
   "scripts": {
-    "start": "node src/index.mjs",
-    "dev": "set DEBUG=express:* & nodemon src/index.mjs",
+    "start": "node src/App.mjs",
+    "dev": "set DEBUG=express:* & nodemon src/App.mjs",
     "tunnel": "ngrok http -region=eu 3000"
   },
   "author": "",

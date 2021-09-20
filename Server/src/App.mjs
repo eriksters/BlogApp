@@ -1,3 +1,5 @@
+import * as BlogPost from "./Models/BlogPost.mjs";
+
 import express from "express";
 import * as dotenv from "dotenv";
 import mongoose from "mongoose";
@@ -5,7 +7,7 @@ import * as path from "path";
 import BlogPostRoutes from "./Routes/BlogPostRoutes.mjs";
 
 //  Dev env config
-const configOut = dotenv.config();
+dotenv.config();
 
 //  Mongoose config
 //  Generate the connection string
@@ -41,7 +43,7 @@ async function main() {
     console.error("Database connection failed");
   }
 
-  app.listen(port);
+  app.listen(process.env.PORT);
 }
 
 main().catch((err) => {
