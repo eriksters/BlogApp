@@ -1,49 +1,11 @@
 import express, { json } from "express";
 import * as dotenv from "dotenv";
 import mongoose from "mongoose";
-import multer from "multer";
 import * as fs from "fs/promises";
 import * as path from "path";
-
-//  Multer Config
-//  Saves the incoming file to Temp dir with a randomly assigned name, keeping the file extension
-const storage = multer.diskStorage({
-  destination(req, file, callback) {
-    callback(null, "Temp");
-  },
-  filename(req, file, callback) {
-    console.log(file);
-    callback(
-      null,
-      `temp_${Math.floor(99999 * Math.random())}.${file.originalname.substring(
-        file.originalname.lastIndexOf(".") + 1
-      )}`
-    );
-  },
-});
-const upload = multer({ storage });
-
-//  Permanently save a file to specified dir and with specified name.
-//  Preserves the file extension
-const saveMulterFile = async (file, dir, name) => {
-  const oldPath = file.path;
-  const fileExtension = oldPath.substring(oldPath.lastIndexOf("."));
-
-  //  If no name is specified, default to name generated on first save
-  const fileNameNoExt = name
-    ? name
-    : oldPath.substring(oldPath.lastIndexOf("/"));
-  const newPath = `${dir}/${fileNameNoExt}${fileExtension}`;
-
-  console.log(`Renaming ${oldPath} to ${newPath}`);
-  await fs.rename(oldPath, newPath);
-
-  return newPath;
-};
+import { TempStore, saveMulterFile } from "../Middleware/Multer.mjs";
 
 const BlogPostModel = mongoose.model("BlogPost");
-
-//  Express
 const BlogPostRoutes = express.Router();
 
 //  Get 10 newest Blog Posts
@@ -76,7 +38,7 @@ BlogPostRoutes.get("/", async (req, res) => {
 
 BlogPostRoutes.post(
   "/",
-  upload.fields([{ name: "Thumbnail" }, { name: "Data" }]),
+  TempStore.fields([{ name: "Thumbnail" }, { name: "Data" }]),
   async (req, res) => {
     const BlogPostData = JSON.parse(req.body.Data);
     BlogPostData.CreateTime = Date.now();
@@ -112,7 +74,7 @@ BlogPostRoutes.post(
 
 BlogPostRoutes.put(
   "/:id",
-  upload.fields([{ name: "Thumbnail" }, { name: "Data" }]),
+  TempStore.fields([{ name: "Thumbnail" }, { name: "Data" }]),
   async (req, res) => {
     const id = req.params.id;
     const UpdatedPost = JSON.parse(req.body.Data);
