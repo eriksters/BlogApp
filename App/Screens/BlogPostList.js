@@ -6,7 +6,7 @@ import axios from "axios";
 import getEnvVars from "../environment";
 import { ActivityIndicator, Colors, IconButton } from "react-native-paper";
 import { createStackNavigator } from "@react-navigation/stack";
-import NewBlogPostScreen from "./NewBlogPostScreen";
+import CreateBlogPostScreen from "./CreateBlogPostScreen";
 
 const BlogPostList = ({ navigation, route }) => {
   const ENV_VARS = getEnvVars();

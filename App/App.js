@@ -12,13 +12,18 @@ import {
 } from "react-native-paper";
 import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { MaterialIcons } from "@expo/vector-icons";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
+import {
+  MaterialIcons,
+  MaterialCommunityIcons,
+  Ionicons,
+  Octicons,
+} from "@expo/vector-icons";
 
-import BlogPostListItem from "./Components/BlogPostListItem";
-import BlogPostList from "./Screens/BlogPostList";
-import NewBlogPostScreen from "./Screens/NewBlogPostScreen";
-import BlogPostListTab from "./Screens/BlogPostListTab";
+import CreateBlogPostScreen from "./Screens/CreateBlogPostScreen";
+import NewestBlogPostListTab from "./Screens/NewestBlogPostListTab";
+import PopularBlogPostListTab from "./Screens/PopularBlogPostListTab";
+import TopBlogPostListTab from "./Screens/TopBlogPostListTab";
+import MyBlogPostListTab from "./Screens/MyBlogPostListTab";
 
 export default function App() {
   let [fontsLoaded] = useFonts({
@@ -31,21 +36,57 @@ export default function App() {
     return (
       <NavigationContainer>
         <Tab.Navigator
-          initialRouteName={"List"}
+          initialRouteName={"Newest"}
           screenOptions={{ headerShown: false }}
         >
           <Tab.Screen
-            name='Posts'
-            component={BlogPostListTab}
+            name='Newest'
+            component={NewestBlogPostListTab}
             options={{
               tabBarIcon: ({ color, size }) => (
-                <MaterialIcons name='view-list' size={size} color={color} />
+                <MaterialCommunityIcons
+                  name='newspaper'
+                  size={size}
+                  color={color}
+                />
+              ),
+              tabBarLabel: "New",
+            }}
+          />
+          <Tab.Screen
+            name='Popular'
+            component={PopularBlogPostListTab}
+            options={{
+              tabBarIcon: ({ color, size }) => (
+                <Octicons name='flame' size={size} color={color} />
+              ),
+            }}
+          />
+          <Tab.Screen
+            name='Top'
+            component={TopBlogPostListTab}
+            options={{
+              tabBarIcon: ({ color, size }) => (
+                <Ionicons name='ribbon-sharp' size={size} color={color} />
+              ),
+            }}
+          />
+          <Tab.Screen
+            name='Mine'
+            component={MyBlogPostListTab}
+            options={{
+              tabBarIcon: ({ color, size }) => (
+                <MaterialIcons
+                  name='account-circle'
+                  size={size}
+                  color={color}
+                />
               ),
             }}
           />
           <Tab.Screen
             name='Remove Me!'
-            component={NewBlogPostScreen}
+            component={CreateBlogPostScreen}
             options={{
               tabBarIcon: ({ color, size }) => (
                 <MaterialCommunityIcons

@@ -7,7 +7,7 @@ import axios from "axios";
 import getEnvVars from "../environment";
 import BlogPostEditor from "../Components/BlogPostEditor";
 
-const NewBlogPostScreen = ({ navigation, route, onSuccess }) => {
+const CreateBlogPostScreen = ({ navigation, route, onSuccess }) => {
   const API_URL = getEnvVars().API_URL;
 
   const api = axios.create({ baseURL: API_URL });
@@ -57,6 +57,7 @@ const NewBlogPostScreen = ({ navigation, route, onSuccess }) => {
       await api.post("/blogposts", data, {
         headers: {
           "Content-Type": "multipart/form-data",
+          authorization: 100100,
         },
       });
 
@@ -112,4 +113,4 @@ const NewBlogPostScreen = ({ navigation, route, onSuccess }) => {
     />
   );
 };
-export default NewBlogPostScreen;
+export default CreateBlogPostScreen;
