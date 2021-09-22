@@ -6,6 +6,10 @@ const BlogPostSchema = new mongoose.Schema({
   ThumbnailURL: String,
   Content: String,
   CreateTime: Date,
+  CreatedBy: {
+    type: String,
+    required: true,
+  },
 });
 
 mongoose.model("BlogPost", BlogPostSchema);

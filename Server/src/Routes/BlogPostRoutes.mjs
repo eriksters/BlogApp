@@ -43,6 +43,12 @@ BlogPostRoutes.post(
     const BlogPostData = JSON.parse(req.body.Data);
     BlogPostData.CreateTime = Date.now();
 
+    //  TODO: Actual authentication
+    const user = req.headers.authorization;
+    BlogPostData.CreatedBy = user;
+
+    console.log(BlogPostData);
+
     const BlogPostModel = mongoose.model("BlogPost");
     const NewPost = new BlogPostModel(BlogPostData);
 
