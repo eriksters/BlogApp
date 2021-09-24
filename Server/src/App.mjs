@@ -5,6 +5,7 @@ import * as dotenv from "dotenv";
 import mongoose from "mongoose";
 import * as path from "path";
 import BlogPostRoutes from "./Routes/BlogPostRoutes.mjs";
+import AccountRoutes from "./Routes/AccountRoutes.mjs";
 
 //  Dev env config
 dotenv.config();
@@ -30,6 +31,7 @@ app.get("/", (req, res) => {
 app.use(express.static(path.resolve() + "\\public"));
 
 app.use("/blogposts", BlogPostRoutes);
+app.use("/account", AccountRoutes);
 
 async function main() {
   try {

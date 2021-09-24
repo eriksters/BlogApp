@@ -1,17 +1,28 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
+import getEnvVars from "../environment";
 
 export const signUp = createAsyncThunk(
   "account/signUp",
-  async (signUpData, thunkAPI) => {
+  async ({ username, password, email }, thunkAPI) => {
     try {
-      const response = await axios.get("https://reqres.in/api/users/2?delay=3");
+      const response = await axios.post(
+        getEnvVars().API_URL + "/account/signup",
+        {
+          username,
+          password,
+          email,
+        }
+      );
+
+      console.log(response.data);
 
       return {
-        token: "JWT_TEST_TOKEN",
-        username: "eriksters",
+        token: response.data.token,
+        username: response.data.username,
       };
     } catch (err) {
+      console.log(err);
       return thunkAPI.rejectWithValue("Sign Up Error");
     }
   }
