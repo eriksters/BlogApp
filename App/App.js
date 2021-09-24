@@ -14,41 +14,57 @@ import {
   Ionicons,
   Octicons,
 } from "@expo/vector-icons";
-import { createStore, combineReducers } from "redux";
-import { Provider as ReduxProvider } from "react-redux";
 
-import { reducer as AccountReducer } from "./Redux/Reducers/AccountReducer";
+import { Provider as PaperProvider } from "react-native-paper";
+
+// import { createStore, combineReducers } from "redux";
+import { Provider as ReduxProvider } from "react-redux";
+import { configureStore } from "@reduxjs/toolkit";
+import AccountReducer from "./Redux/AccountSlice";
 
 import CreateBlogPostScreen from "./Screens/CreateBlogPostScreen";
 import NewestBlogPostListTab from "./Screens/NewestBlogPostListTab";
 import PopularBlogPostListTab from "./Screens/PopularBlogPostListTab";
 import TopBlogPostListTab from "./Screens/TopBlogPostListTab";
 import MyBlogPostListTab from "./Screens/MyBlogPostListTab";
+import SignInScreen from "./Screens/SignInScreen";
+import SignUpScreen from "./Screens/SignUpScreen";
+import { createStackNavigator } from "@react-navigation/stack";
 
 export default function App() {
   let [fontsLoaded] = useFonts({
     Baskervville_400Regular,
   });
 
-  const preloadedState = {
-    account: {
-      signedIn: true,
-      accountId: 101010,
-      username: "Bob",
-      token: "TEST_JWT_TOKEN",
-    },
-  };
+  // const preloadedState = {
+  //   account: {
+  //     signedIn: true,
+  //     accountId: 101010,
+  //     username: "Bob",
+  //     token: "TEST_JWT_TOKEN",
+  //   },
+  // };
 
-  const reducers = combineReducers({ account: AccountReducer });
-  const reduxStore = createStore(reducers, preloadedState);
+  // const reducers = combineReducers({ account: AccountReducer });
+  const reduxStore = configureStore({ reducer: { account: AccountReducer } });
 
   const Tab = createBottomTabNavigator();
+
+  const Stack = createStackNavigator();
 
   if (fontsLoaded) {
     return (
       <ReduxProvider store={reduxStore}>
-        <NavigationContainer>
-          <Tab.Navigator
+        <PaperProvider>
+          <NavigationContainer>
+            <Stack.Navigator
+              screenOptions={{ headerShown: false }}
+              initialRouteName='SignUp'
+            >
+              <Stack.Screen name='SignIn' component={SignInScreen} />
+              <Stack.Screen name='SignUp' component={SignUpScreen} />
+            </Stack.Navigator>
+            {/* <Tab.Navigator
             initialRouteName={"Newest"}
             screenOptions={{ headerShown: false }}
           >
@@ -110,8 +126,9 @@ export default function App() {
                 ),
               }}
             />
-          </Tab.Navigator>
-        </NavigationContainer>
+          </Tab.Navigator> */}
+          </NavigationContainer>
+        </PaperProvider>
       </ReduxProvider>
     );
   } else {
