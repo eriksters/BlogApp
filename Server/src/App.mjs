@@ -1,4 +1,5 @@
 import * as BlogPost from "./Models/BlogPost.mjs";
+import * as Account from "./Models/Account.mjs";
 
 import express from "express";
 import * as dotenv from "dotenv";
