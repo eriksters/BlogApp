@@ -22,11 +22,10 @@ const SignUpScreen = ({ navigation }) => {
   const [errors, setErrors] = useState([]);
 
   useEffect(() => {
-    if (account.error) {
-      console.log("Adding error: \n", account.error);
-      setErrors([account.error]);
+    if (account.errors.length > 0) {
+      setErrors(account.errors);
     }
-  }, [account.error]);
+  }, [account.errors]);
 
   const getPasswordErrors = () => {
     let errors = [];
@@ -75,8 +74,6 @@ const SignUpScreen = ({ navigation }) => {
   };
 
   const onSignUpPress = () => {
-    // console.log(account);
-
     let errors = getPasswordErrors();
 
     if (!emailValid()) errors = [...errors, "Not a valid E-Mail"];
