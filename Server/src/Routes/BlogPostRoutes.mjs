@@ -45,11 +45,7 @@ BlogPostRoutes.post(
     const BlogPostData = JSON.parse(req.body.Data);
     BlogPostData.CreateTime = Date.now();
 
-    //  TODO: Actual authentication
-    const user = req.headers.authorization;
-    BlogPostData.CreatedBy = user;
-
-    console.log(BlogPostData);
+    BlogPostData.CreatedBy = req.account._id;
 
     const BlogPostModel = mongoose.model("BlogPost");
     const NewPost = new BlogPostModel(BlogPostData);
@@ -101,6 +97,13 @@ BlogPostRoutes.put(
       res.sendStatus(500);
     }
 
+    if (OldPost.CreatedBy !== req.account._id) {
+      console.log(
+        `Not allowed!\nCreated by: ${OldPost.CreatedBy}\nYou are: ${req.account._id}`
+      );
+      return res.status(401).send("You are not allowed to edit this post");
+    }
+
     //  If the request includes a new thumbnail, delete the old one and replace with new.
     //  If not, use the old thumbnail URL
     if (req.files.Thumbnail) {
@@ -139,8 +142,6 @@ BlogPostRoutes.delete("/:id", RequireAuth, async (req, res) => {
 
   const Post = await BlogPostModel.findOne({ _id: postId });
 
-  console.log(Post);
-
   if (Post === null) {
     res.sendStatus(404);
   } else {
@@ -148,6 +149,10 @@ BlogPostRoutes.delete("/:id", RequireAuth, async (req, res) => {
       await fs.rm("public/" + Post.ThumbnailURL);
     } catch (err) {
       //  TODO: Handle file not deleted
+    }
+
+    if (Post.CreatedBy !== req.account._id) {
+      return res.status(401).send("You are not allowed to delete this post");
     }
 
     const deleteResult = await BlogPostModel.deleteOne({ _id: postId }).exec();
