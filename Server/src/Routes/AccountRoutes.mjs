@@ -63,6 +63,11 @@ const validateAccountData = async ({ username, password, email }) => {
   return errors;
 };
 
+//  Creates token from account
+const signToken = (account) => {
+  return jwt.sign({ user_id: account._id.toString() }, process.env.JWT_KEY);
+};
+
 AccountRoutes.post("/signup", async (req, res) => {
   const signUpData = req.body;
   let hash = null;
@@ -109,10 +114,7 @@ AccountRoutes.post("/signup", async (req, res) => {
   }
 
   //  Generate a JWT
-  const token = jwt.sign(
-    { user_id: CreatedAccount._id.toString() },
-    process.env.JWT_KEY
-  );
+  const token = signToken(CreatedAccount);
 
   const data = {
     username: signUpData.username,
@@ -120,6 +122,32 @@ AccountRoutes.post("/signup", async (req, res) => {
   };
 
   res.send(data);
+});
+
+AccountRoutes.post("/signin", async (req, res) => {
+  let passwordMatch = false;
+  let token = null;
+  const AccountModel = mongoose.model("Account");
+  const signInData = req.body;
+
+  const Account = await AccountModel.findOne({
+    email: signInData.email,
+  }).exec();
+  if (Account === null) {
+    return res.status(400).send({ errors: ["Email or Password invalid"] });
+  }
+
+  passwordMatch = await bcrypt.compare(signInData.password, Account.password);
+  if (!passwordMatch) {
+    return res.status(400).send({ errors: ["Email or Password invalid"] });
+  }
+
+  token = signToken(Account);
+
+  return res.status(200).send({
+    token,
+    username: Account.username,
+  });
 });
 
 export default AccountRoutes;

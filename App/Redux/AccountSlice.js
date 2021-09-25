@@ -20,13 +20,47 @@ export const signUp = createAsyncThunk(
         username: response.data.username,
       };
     } catch (err) {
-      console.log("Response data: \n", err.response.data);
-
-      if (err.response.status === 400) {
-        return thunkAPI.rejectWithValue(err.response.data);
+      if (err.response) {
+        if (err.response.status === 400) {
+          return thunkAPI.rejectWithValue(err.response.data);
+        } else {
+          return thunkAPI.rejectWithValue({
+            errors: ["Problem on our end. Try again later."],
+          });
+        }
       }
 
-      return thunkAPI.rejectWithValue("Problem on our end. Try again later.");
+      return thunkAPI.rejectWithValue({
+        errors: ["Problem with network. Are you connected to the internet?"],
+      });
+    }
+  }
+);
+
+export const signIn = createAsyncThunk(
+  "account/signIn",
+  async ({ email, password }, thunkAPI) => {
+    try {
+      const response = await axios.post(
+        getEnvVars().API_URL + "/account/signin",
+        {
+          email,
+          password,
+        }
+      );
+
+      return {
+        token: response.data.token,
+        username: response.data.username,
+      };
+    } catch (err) {
+      if (err.response) {
+        return thunkAPI.rejectWithValue(err.response.data);
+      } else {
+        return thunkAPI.rejectWithValue({
+          errors: ["Problem with network. Are you connected to the internet?"],
+        });
+      }
     }
   }
 );
@@ -51,6 +85,7 @@ const slice = createSlice({
   },
 
   extraReducers: (builder) => {
+    //  Sign up
     builder.addCase(signUp.pending, (state) => {
       state.errors = [];
       state.loading = true;
@@ -63,6 +98,25 @@ const slice = createSlice({
       state.loading = false;
     });
     builder.addCase(signUp.rejected, (state, action) => {
+      console.log(action);
+      console.log("Errrr");
+      state.errors = action.payload.errors;
+      state.loading = false;
+    });
+
+    //  Sign in
+    builder.addCase(signIn.pending, (state) => {
+      state.errors = [];
+      state.loading = true;
+    });
+    builder.addCase(signIn.fulfilled, (state, action) => {
+      state.errors = [];
+      state.username = action.payload.username;
+      state.signedIn = true;
+      state.token = action.payload.token;
+      state.loading = false;
+    });
+    builder.addCase(signIn.rejected, (state, action) => {
       state.errors = action.payload.errors;
       state.loading = false;
     });

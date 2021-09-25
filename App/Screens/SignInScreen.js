@@ -3,18 +3,25 @@ import { View, Text, StyleSheet } from "react-native";
 import { Button } from "react-native-paper";
 import { createStackNavigator } from "@react-navigation/stack";
 import { useDispatch, useSelector } from "react-redux";
-import { signIn } from "../Redux/Actions/AccountActions";
-import SignUpScreen from "./SignUpScreen";
+import { signIn } from "../Redux/AccountSlice";
 import { Provider as PaperProvider, TextInput } from "react-native-paper";
+import ErrorList from "../Components/ErrorList";
 
 const SignInScreen = ({ navigation }) => {
-  const Stack = createStackNavigator();
-
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
   const account = useSelector((state) => state.account);
   const dispatch = useDispatch();
+
+  const onSignInPress = () => {
+    dispatch(
+      signIn({
+        email,
+        password,
+      })
+    );
+  };
 
   return (
     <View style={styles.container}>
@@ -34,12 +41,12 @@ const SignInScreen = ({ navigation }) => {
         mode='outlined'
         secureTextEntry={true}
       />
+      <ErrorList data={account.errors} />
       <Button
         mode='contained'
         style={styles.signInButton}
-        onPress={() => {
-          dispatch(signIn(email, password));
-        }}
+        onPress={onSignInPress}
+        disabled={account.loading}
       >
         Sign in
       </Button>
@@ -61,8 +68,6 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    borderWidth: 1,
-    borderColor: "red",
     padding: 20,
   },
   title: {

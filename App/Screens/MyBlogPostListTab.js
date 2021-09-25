@@ -2,7 +2,7 @@ import React from "react";
 import { View, Text, StyleSheet } from "react-native";
 import { Button } from "react-native-paper";
 import { useSelector, useDispatch } from "react-redux";
-import { signIn, signOut } from "../Redux/Actions/AccountActions";
+// import { signIn, signOut } from "../Redux/Actions/AccountActions";
 
 const MyBlogPostListTab = () => {
   const account = useSelector((state) => state.account);

@@ -9,6 +9,7 @@ import {
 } from "react-native-paper";
 import { useDispatch } from "react-redux";
 import { useSelector } from "react-redux";
+import ErrorList from "../Components/ErrorList";
 import { signUp } from "../Redux/AccountSlice";
 
 const SignUpScreen = ({ navigation }) => {
@@ -143,12 +144,7 @@ const SignUpScreen = ({ navigation }) => {
             : { colors: { primary: Colors.red600 } }
         }
       />
-      <FlatList
-        data={errors}
-        keyExtractor={(item) => item}
-        renderItem={({ item }) => <HelperText type='error'>{item}</HelperText>}
-        style={styles.errorList}
-      />
+      <ErrorList data={errors} />
       <Button
         onPress={onSignUpPress}
         mode='contained'
@@ -183,10 +179,6 @@ const styles = StyleSheet.create({
   signUpButton: {
     width: "100%",
     marginTop: 20,
-  },
-  errorList: {
-    flexGrow: 0,
-    width: "100%",
   },
   backButton: {
     position: "absolute",
