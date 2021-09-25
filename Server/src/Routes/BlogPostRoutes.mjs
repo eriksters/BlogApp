@@ -9,32 +9,42 @@ import RequireAuth from "../Middleware/RequireAuth.mjs";
 const BlogPostModel = mongoose.model("BlogPost");
 const BlogPostRoutes = express.Router();
 
-//  Get 10 newest Blog Posts
-//  If lastPostTime is specified, returns posts that are older than the specified time
+const createAbsoluteURLFromRelative = (relativeURL) => {
+  return `${process.env.SERVER_BASE_URL}/${relativeURL}`;
+};
+
+//  Get next 10 Blog Posts
+//  Allowed values for sortBy: new
 BlogPostRoutes.get("/", async (req, res) => {
-  const lastPostTime = req.query.lastPostTime
-    ? req.query.lastPostTime
-    : Date.now();
+  const params = req.query;
+  let query;
+  let results;
 
+  //  Construct the query
+  query = BlogPostModel.find({});
+  if (params.sortBy === "new") {
+    const lastPostTime = params.lastPostTime || Date.now();
+
+    query
+      .where("CreateTime")
+      .lt(lastPostTime)
+      .sort({ CreateTime: "descending" });
+  }
+
+  //  Execute query
   try {
-    let BlogPosts = await BlogPostModel.find({
-      CreateTime: { $lt: lastPostTime },
-    })
-      .where()
-      .sort({ CreateTime: "descending" })
-      .limit(10)
-      .exec();
-
-    BlogPosts.forEach(
-      (post) =>
-        (post.ThumbnailURL = `${process.env.SERVER_BASE_URL}/${post.ThumbnailURL}`)
-    );
-
-    res.status(200).send({ BlogPosts });
+    results = await query.limit(10).exec();
   } catch (err) {
     console.error("Failed getting posts. ", err);
     res.sendStatus(500);
   }
+
+  //  Format and send results
+  results.forEach(
+    (post) =>
+      (post.ThumbnailURL = createAbsoluteURLFromRelative(post.ThumbnailURL))
+  );
+  res.status(200).send({ BlogPosts: results });
 });
 
 BlogPostRoutes.post(
@@ -45,7 +55,7 @@ BlogPostRoutes.post(
     const BlogPostData = JSON.parse(req.body.Data);
     BlogPostData.CreateTime = Date.now();
 
-    BlogPostData.CreatedBy = req.account._id;
+    BlogPostData.CreatedBy = req.account._id.toString();
 
     const BlogPostModel = mongoose.model("BlogPost");
     const NewPost = new BlogPostModel(BlogPostData);
@@ -97,10 +107,7 @@ BlogPostRoutes.put(
       res.sendStatus(500);
     }
 
-    if (OldPost.CreatedBy !== req.account._id) {
-      console.log(
-        `Not allowed!\nCreated by: ${OldPost.CreatedBy}\nYou are: ${req.account._id}`
-      );
+    if (OldPost.CreatedBy !== req.account._id.toString()) {
       return res.status(401).send("You are not allowed to edit this post");
     }
 
@@ -147,11 +154,9 @@ BlogPostRoutes.delete("/:id", RequireAuth, async (req, res) => {
   } else {
     try {
       await fs.rm("public/" + Post.ThumbnailURL);
-    } catch (err) {
-      //  TODO: Handle file not deleted
-    }
+    } catch (err) {}
 
-    if (Post.CreatedBy !== req.account._id) {
+    if (Post.CreatedBy !== req.account._id.toString()) {
       return res.status(401).send("You are not allowed to delete this post");
     }
 

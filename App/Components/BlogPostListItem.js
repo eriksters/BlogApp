@@ -17,6 +17,7 @@ import Collapsible from "react-native-collapsible";
 import getEnvVars from "../environment";
 import axios from "axios";
 import { useNavigation } from "@react-navigation/core";
+import { deleteBlogPost } from "../API/BlogPostEndpoint";
 
 const BlogPostListItem = ({ BlogPost, onDeleteCallback }) => {
   const navigation = useNavigation();
@@ -36,10 +37,9 @@ const BlogPostListItem = ({ BlogPost, onDeleteCallback }) => {
       {
         text: "Yes",
         onPress: () => {
-          api.delete("/blogposts/" + BlogPost._id).then((res) => {
-            console.log(res);
+          deleteBlogPost(BlogPost._id).then(() => {
+            onDeleteCallback();
           });
-          onDeleteCallback();
         },
       },
     ]);

@@ -5,8 +5,8 @@
   "type": "module",
   "main": "./src/App.mjs",
   "scripts": {
-    "start": "node src/App.mjs",
-    "dev": "set DEBUG=express:* & nodemon src/App.mjs",
+    "start": "set NODE_ENV=dev& node src/App.mjs",
+    "dev": "set DEBUG=express:*&set NODE_ENV=dev&nodemon src/App.mjs",
     "tunnel": "ngrok http -region=eu 3000"
   },
   "author": "",

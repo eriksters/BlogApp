@@ -1,24 +1,16 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 import getEnvVars from "../environment";
+import {
+  signIn as API_signIn,
+  signUp as API_signUp,
+} from "../API/AccountEndpoint";
 
 export const signUp = createAsyncThunk(
   "account/signUp",
   async ({ username, password, email }, thunkAPI) => {
     try {
-      const response = await axios.post(
-        getEnvVars().API_URL + "/account/signup",
-        {
-          username,
-          password,
-          email,
-        }
-      );
-
-      return {
-        token: response.data.token,
-        username: response.data.username,
-      };
+      return await API_signUp(email, password, username);
     } catch (err) {
       if (err.response) {
         if (err.response.status === 400) {
@@ -41,18 +33,7 @@ export const signIn = createAsyncThunk(
   "account/signIn",
   async ({ email, password }, thunkAPI) => {
     try {
-      const response = await axios.post(
-        getEnvVars().API_URL + "/account/signin",
-        {
-          email,
-          password,
-        }
-      );
-
-      return {
-        token: response.data.token,
-        username: response.data.username,
-      };
+      return await API_signIn(email, password);
     } catch (err) {
       if (err.response) {
         return thunkAPI.rejectWithValue(err.response.data);

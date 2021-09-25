@@ -7,37 +7,38 @@ import getEnvVars from "../environment";
 import { ActivityIndicator, Colors, IconButton } from "react-native-paper";
 import { createStackNavigator } from "@react-navigation/stack";
 import CreateBlogPostScreen from "./CreateBlogPostScreen";
+import { getNewBlogPosts } from "../API/BlogPostEndpoint";
 
 const BlogPostList = ({ navigation, route }) => {
   const ENV_VARS = getEnvVars();
-  const API_URL = ENV_VARS.API_URL;
-
-  const api = axios.create({
-    baseURL: API_URL,
-  });
 
   const [BlogPosts, setBlogPosts] = useState([]);
-  const [refreshing, setRefreshing] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
   const [loadingMore, setLoadingMore] = useState(false);
 
   const updatePosts = async () => {
     setRefreshing(true);
 
-    const response = await api.get("/blogposts");
+    const posts = await getNewBlogPosts();
 
-    setBlogPosts(response.data.BlogPosts);
+    setBlogPosts(posts);
     setRefreshing(false);
   };
 
   const getMorePosts = async () => {
-    setLoadingMore(true);
+    if (!refreshing) {
+      setLoadingMore(true);
 
-    const response = await api.get("/blogposts", {
-      params: { lastPostTime: BlogPosts[BlogPosts.length - 1].CreateTime },
-    });
+      console.log("Loading More");
+      const posts = await getNewBlogPosts(
+        BlogPosts[BlogPosts.length - 1].CreateTime
+      );
 
-    setBlogPosts([...BlogPosts, ...response.data.BlogPosts]);
-    setLoadingMore(false);
+      console.log(posts);
+
+      setBlogPosts([...BlogPosts, ...posts]);
+      setLoadingMore(false);
+    }
   };
 
   useEffect(() => {

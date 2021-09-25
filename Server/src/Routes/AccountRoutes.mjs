@@ -104,11 +104,14 @@ AccountRoutes.post("/signup", async (req, res) => {
   });
 
   try {
-    // CreatedAccount = await NewAccount.save();
-    CreatedAccount = {
-      ...signUpData,
-      _id: 123,
-    };
+    if (process.env.NODE_ENV === "dev") {
+      CreatedAccount = {
+        ...signUpData,
+        _id: 123,
+      };
+    } else {
+      CreatedAccount = await NewAccount.save();
+    }
   } catch (err) {
     console.log(err);
     res.sendStatus(500);

@@ -3,12 +3,9 @@ import { View, Text, StyleSheet } from "react-native";
 import BlogPostEditor from "../Components/BlogPostEditor";
 import getEnvVars from "../environment";
 import axios from "axios";
+import { editBlogPost } from "../API/BlogPostEndpoint";
 
 const EditBlogPostScreen = ({ navigation, route }) => {
-  const API_URL = getEnvVars().API_URL;
-
-  const api = axios.create({ baseURL: API_URL });
-
   const [newThumbnail, setNewThumbnail] = useState(false);
   const [BlogPost, setBlogPost] = useState(route.params.BlogPost);
   const [saving, setSaving] = useState(false);
@@ -33,39 +30,21 @@ const EditBlogPostScreen = ({ navigation, route }) => {
 
   const onSave = async () => {
     setSaving(true);
-    const data = new FormData();
-
-    if (newThumbnail) {
-      data.append("Thumbnail", {
-        name: state.ThumbnailURL.substring(
-          state.ThumbnailURL.lastIndexOf("/") + 1
-        ),
-        type: "image/jpeg",
-        uri: state.ThumbnailURL,
-      });
-    }
-
-    data.append(
-      "Data",
-      JSON.stringify({
-        Title: state.Title,
-        Description: state.Description,
-        Content: state.Content,
-      })
-    );
 
     try {
-      await api.put("/blogposts/" + BlogPost._id, data, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
+      await editBlogPost(
+        BlogPost._id,
+        state.Title,
+        state.Description,
+        state.Content,
+        newThumbnail ? state.ThumbnailURL : undefined
+      );
 
-      console.log("Post Saved Successfully");
       navigation.navigate({ name: "List", params: { UpdatedPost: true } });
     } catch (err) {
-      console.error("Error Saving Post", err);
+      console.error("Error updating post:\n", err);
     }
+
     setSaving(false);
   };
 

@@ -6,12 +6,9 @@ import { Button, TextInput } from "react-native-paper";
 import axios from "axios";
 import getEnvVars from "../environment";
 import BlogPostEditor from "../Components/BlogPostEditor";
+import { createBlogPost } from "../API/BlogPostEndpoint";
 
 const CreateBlogPostScreen = ({ navigation, route, onSuccess }) => {
-  const API_URL = getEnvVars().API_URL;
-
-  const api = axios.create({ baseURL: API_URL });
-
   const [BlogPost, setBlogPost] = useState({});
   const [saving, setSaving] = useState(false);
 
@@ -34,74 +31,21 @@ const CreateBlogPostScreen = ({ navigation, route, onSuccess }) => {
 
   const onSave = async () => {
     setSaving(true);
-    const data = new FormData();
-
-    data.append("Thumbnail", {
-      name: state.ThumbnailURL.substring(
-        state.ThumbnailURL.lastIndexOf("/") + 1
-      ),
-      type: "image/jpeg",
-      uri: state.ThumbnailURL,
-    });
-
-    data.append(
-      "Data",
-      JSON.stringify({
-        Title: state.Title,
-        Description: state.Description,
-        Content: state.Content,
-      })
-    );
 
     try {
-      await api.post("/blogposts", data, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-          authorization: 100100,
-        },
-      });
+      await createBlogPost(
+        state.Title,
+        state.Description,
+        state.Content,
+        state.ThumbnailURL
+      );
 
-      console.log("Post Saved Successfully");
       navigation.navigate({ name: "List", params: { NewPost: true } });
     } catch (err) {
-      console.error("Error Saving Post", err);
+      console.log("Error saving post\n", err);
     }
+
     setSaving(false);
-  };
-
-  const onSavePress = () => {
-    console.log("Saving");
-
-    const data = new FormData();
-
-    data.append("Thumbnail", {
-      name: thumbnailUri.substring(thumbnailUri.lastIndexOf("/") + 1),
-      type: "image/jpeg",
-      uri: thumbnailUri,
-    });
-
-    data.append(
-      "Data",
-      JSON.stringify({
-        Title: title,
-        Description: description,
-        Content: content,
-      })
-    );
-
-    api
-      .post("/blogposts", data, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      })
-      .then(() => {
-        console.log("Post Saved Successfully");
-        navigation.navigate({ name: "List", params: { NewPost: true } });
-      })
-      .catch((err) => {
-        console.error("Error Saving Post", err);
-      });
   };
 
   return (
