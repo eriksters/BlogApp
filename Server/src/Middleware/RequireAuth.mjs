@@ -25,7 +25,7 @@ export default async (req, res, next) => {
   }
 
   AccountModel = mongoose.model("Account");
-  req.user = await AccountModel.findById(user_id);
+  req.account = await AccountModel.findById(user_id);
 
   next();
 };
