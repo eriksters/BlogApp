@@ -30,104 +30,21 @@ import MyBlogPostListTab from "./Screens/MyBlogPostListTab";
 import SignInScreen from "./Screens/SignInScreen";
 import SignUpScreen from "./Screens/SignUpScreen";
 import { createStackNavigator } from "@react-navigation/stack";
+import { useSelector } from "react-redux";
+import NavigationBase from "./Screens/NavigationBase";
 
 export default function App() {
   let [fontsLoaded] = useFonts({
     Baskervville_400Regular,
   });
 
-  // const preloadedState = {
-  //   account: {
-  //     signedIn: true,
-  //     accountId: 101010,
-  //     username: "Bob",
-  //     token: "TEST_JWT_TOKEN",
-  //   },
-  // };
-
-  // const reducers = combineReducers({ account: AccountReducer });
   const reduxStore = configureStore({ reducer: { account: AccountReducer } });
-
-  const Tab = createBottomTabNavigator();
-
-  const Stack = createStackNavigator();
 
   if (fontsLoaded) {
     return (
       <ReduxProvider store={reduxStore}>
         <PaperProvider>
-          <NavigationContainer>
-            <Stack.Navigator
-              screenOptions={{ headerShown: false }}
-              initialRouteName='SignIn'
-            >
-              <Stack.Screen name='SignIn' component={SignInScreen} />
-              <Stack.Screen name='SignUp' component={SignUpScreen} />
-            </Stack.Navigator>
-            {/* <Tab.Navigator
-            initialRouteName={"Newest"}
-            screenOptions={{ headerShown: false }}
-          >
-            <Tab.Screen
-              name='Newest'
-              component={NewestBlogPostListTab}
-              options={{
-                tabBarIcon: ({ color, size }) => (
-                  <MaterialCommunityIcons
-                    name='newspaper'
-                    size={size}
-                    color={color}
-                  />
-                ),
-                tabBarLabel: "New",
-              }}
-            />
-            <Tab.Screen
-              name='Popular'
-              component={PopularBlogPostListTab}
-              options={{
-                tabBarIcon: ({ color, size }) => (
-                  <Octicons name='flame' size={size} color={color} />
-                ),
-              }}
-            />
-            <Tab.Screen
-              name='Top'
-              component={TopBlogPostListTab}
-              options={{
-                tabBarIcon: ({ color, size }) => (
-                  <Ionicons name='ribbon-sharp' size={size} color={color} />
-                ),
-              }}
-            />
-            <Tab.Screen
-              name='Mine'
-              component={MyBlogPostListTab}
-              options={{
-                tabBarIcon: ({ color, size }) => (
-                  <MaterialIcons
-                    name='account-circle'
-                    size={size}
-                    color={color}
-                  />
-                ),
-              }}
-            />
-            <Tab.Screen
-              name='Remove Me!'
-              component={CreateBlogPostScreen}
-              options={{
-                tabBarIcon: ({ color, size }) => (
-                  <MaterialCommunityIcons
-                    name='plus-box'
-                    size={size}
-                    color={color}
-                  />
-                ),
-              }}
-            />
-          </Tab.Navigator> */}
-          </NavigationContainer>
+          <NavigationBase />
         </PaperProvider>
       </ReduxProvider>
     );
@@ -136,14 +53,4 @@ export default function App() {
   }
 }
 
-const styles = StyleSheet.create({
-  container: {
-    paddingTop: 50,
-    paddingHorizontal: 10,
-    // flex: 1,
-    backgroundColor: "#F0F0F0",
-    alignItems: "center",
-    justifyContent: "flex-start",
-  },
-  statusBar: {},
-});
+const styles = StyleSheet.create({});

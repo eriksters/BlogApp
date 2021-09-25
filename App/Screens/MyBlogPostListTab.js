@@ -2,7 +2,7 @@ import React from "react";
 import { View, Text, StyleSheet } from "react-native";
 import { Button } from "react-native-paper";
 import { useSelector, useDispatch } from "react-redux";
-// import { signIn, signOut } from "../Redux/Actions/AccountActions";
+import { signOut } from "../Redux/AccountSlice";
 
 const MyBlogPostListTab = () => {
   const account = useSelector((state) => state.account);
@@ -11,13 +11,12 @@ const MyBlogPostListTab = () => {
   return (
     <View style={styles.container}>
       <Text>My posts</Text>
-      <Text>
-        {account.signedIn ? "You are signed in" : "You should sign in"}
-      </Text>
-      <Button onPress={() => dispatch(signIn("Bob@snailmail.com", "Bob123"))}>
-        Log In
+      <Text>Sign In Status: {account.signInStatus}</Text>
+      {/* <Text></Text> */}
+      <Button onPress={() => dispatch(signOut())}>
+        Sign in to see your posts and create new ones!
       </Button>
-      <Button onPress={() => dispatch(signOut())}>Log Out</Button>
+      {/* <Button onPress={() => dispatch(signOut())}>Log Out</Button> */}
     </View>
   );
 };

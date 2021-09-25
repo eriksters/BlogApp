@@ -3,7 +3,7 @@ import { View, Text, StyleSheet } from "react-native";
 import { Button } from "react-native-paper";
 import { createStackNavigator } from "@react-navigation/stack";
 import { useDispatch, useSelector } from "react-redux";
-import { signIn } from "../Redux/AccountSlice";
+import { guestLogin, signIn } from "../Redux/AccountSlice";
 import { Provider as PaperProvider, TextInput } from "react-native-paper";
 import ErrorList from "../Components/ErrorList";
 
@@ -21,6 +21,10 @@ const SignInScreen = ({ navigation }) => {
         password,
       })
     );
+  };
+
+  const onGuestLoginPress = () => {
+    dispatch(guestLogin());
   };
 
   return (
@@ -56,9 +60,7 @@ const SignInScreen = ({ navigation }) => {
       </Button>
       <Text>or</Text>
       {/* TODO: Continue as guest */}
-      <Button onPress={() => navigation.navigate("SignUp")}>
-        Continue as guest
-      </Button>
+      <Button onPress={onGuestLoginPress}>Continue as guest</Button>
     </View>
   );
 };

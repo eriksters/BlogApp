@@ -70,7 +70,7 @@ const slice = createSlice({
 
   initialState: {
     errors: [],
-    signedIn: false,
+    signInStatus: "none",
     loading: false,
     username: null,
     token: null,
@@ -79,8 +79,13 @@ const slice = createSlice({
   reducers: {
     signOut(state, action) {
       state.username = null;
-      state.signedIn = false;
+      state.signInStatus = "none";
       state.token = null;
+    },
+    guestLogin(state, action) {
+      console.log(state);
+      state.username = "guest";
+      state.signInStatus = "guest";
     },
   },
 
@@ -94,12 +99,10 @@ const slice = createSlice({
       state.errors = [];
       state.username = action.payload.username;
       state.token = action.payload.token;
-      state.signedIn = true;
+      state.signInStatus = "SignedIn";
       state.loading = false;
     });
     builder.addCase(signUp.rejected, (state, action) => {
-      console.log(action);
-      console.log("Errrr");
       state.errors = action.payload.errors;
       state.loading = false;
     });
@@ -112,7 +115,7 @@ const slice = createSlice({
     builder.addCase(signIn.fulfilled, (state, action) => {
       state.errors = [];
       state.username = action.payload.username;
-      state.signedIn = true;
+      state.signInStatus = "SignedIn";
       state.token = action.payload.token;
       state.loading = false;
     });
@@ -122,5 +125,7 @@ const slice = createSlice({
     });
   },
 });
+
+export const { signOut, guestLogin } = slice.actions;
 
 export default reducer = slice.reducer;
