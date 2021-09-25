@@ -2,6 +2,7 @@ import express from "express";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import mongoose from "mongoose";
+import RequireAuth from "../Middleware/RequireAuth.mjs";
 
 const AccountRoutes = express.Router();
 

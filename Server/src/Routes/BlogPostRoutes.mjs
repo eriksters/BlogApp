@@ -4,6 +4,7 @@ import mongoose from "mongoose";
 import * as fs from "fs/promises";
 import * as path from "path";
 import { TempStore, saveMulterFile } from "../Middleware/Multer.mjs";
+import RequireAuth from "../Middleware/RequireAuth.mjs";
 
 const BlogPostModel = mongoose.model("BlogPost");
 const BlogPostRoutes = express.Router();
@@ -38,6 +39,7 @@ BlogPostRoutes.get("/", async (req, res) => {
 
 BlogPostRoutes.post(
   "/",
+  RequireAuth,
   TempStore.fields([{ name: "Thumbnail" }, { name: "Data" }]),
   async (req, res) => {
     const BlogPostData = JSON.parse(req.body.Data);
@@ -80,6 +82,7 @@ BlogPostRoutes.post(
 
 BlogPostRoutes.put(
   "/:id",
+  RequireAuth,
   TempStore.fields([{ name: "Thumbnail" }, { name: "Data" }]),
   async (req, res) => {
     const id = req.params.id;
@@ -131,7 +134,7 @@ BlogPostRoutes.put(
   }
 );
 
-BlogPostRoutes.delete("/:id", async (req, res) => {
+BlogPostRoutes.delete("/:id", RequireAuth, async (req, res) => {
   const postId = req.params.id;
 
   const Post = await BlogPostModel.findOne({ _id: postId });
