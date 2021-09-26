@@ -40,7 +40,7 @@ const EditBlogPostScreen = ({ navigation, route }) => {
         newThumbnail ? state.ThumbnailURL : undefined
       );
 
-      navigation.navigate({ name: "List", params: { UpdatedPost: true } });
+      navigation.navigate({ name: "Home", params: { UpdatedPost: true } });
     } catch (err) {
       console.error("Error updating post:\n", err);
     }

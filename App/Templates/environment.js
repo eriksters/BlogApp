@@ -6,12 +6,15 @@ import { Platform } from "react-native";
 const ENV = {
   dev: {
     API_URL: "---",
+    ENVIRONMENT: "dev",
   },
   staging: {
     API_URL: "---",
+    ENVIRONMENT: "staging",
   },
   prod: {
     API_URL: "---",
+    ENVIRONMENT: "prod",
   },
 };
 

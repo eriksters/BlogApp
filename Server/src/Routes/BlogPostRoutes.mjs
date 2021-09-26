@@ -31,6 +31,10 @@ BlogPostRoutes.get("/", async (req, res) => {
       .sort({ CreateTime: "descending" });
   }
 
+  if (params.createdBy) {
+    query.where("CreatedBy").equals(params.createdBy);
+  }
+
   //  Execute query
   try {
     results = await query.limit(10).exec();

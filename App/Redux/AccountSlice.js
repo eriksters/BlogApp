@@ -46,17 +46,30 @@ export const signIn = createAsyncThunk(
   }
 );
 
+const initialState =
+  getEnvVars().ENVIRONMENT === "dev"
+    ? {
+        errors: [],
+        signInStatus: "SignedIn",
+        _id: "614f87e103be91078b5b1b6f",
+        loading: false,
+        username: "TestUser",
+        token:
+          "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiNjE0Zjg3ZTEwM2JlOTEwNzhiNWIxYjZmIiwiaWF0IjoxNjMyNjY5MDUzfQ.Q4pF6XZnGOvHFF6EsVjfQXTw3bqMM6R4y0smYWDUmg8",
+      }
+    : {
+        errors: [],
+        signInStatus: "none",
+        loading: false,
+        username: null,
+        token: null,
+        _id: null,
+      };
+
 const slice = createSlice({
   name: "account",
 
-  initialState: {
-    errors: [],
-    signInStatus: "none",
-    loading: false,
-    username: null,
-    token: null,
-    _id: null,
-  },
+  initialState,
 
   reducers: {
     signOut(state, action) {

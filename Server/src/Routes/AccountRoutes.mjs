@@ -106,8 +106,8 @@ AccountRoutes.post("/signup", async (req, res) => {
   try {
     if (process.env.NODE_ENV === "dev") {
       CreatedAccount = {
-        ...signUpData,
-        _id: 123,
+        _id: "614f87e103be91078b5b1b6f",
+        username: "TestUser",
       };
     } else {
       CreatedAccount = await NewAccount.save();
@@ -121,7 +121,7 @@ AccountRoutes.post("/signup", async (req, res) => {
   const token = signToken(CreatedAccount);
 
   const data = {
-    username: signUpData.username,
+    username: CreatedAccount.username,
     _id: CreatedAccount._id,
     token,
   };
@@ -134,6 +134,16 @@ AccountRoutes.post("/signin", async (req, res) => {
   let token = null;
   const AccountModel = mongoose.model("Account");
   const signInData = req.body;
+
+  //  Check if login is using one of the test emails
+
+  if (
+    (process.env.NODE_ENV !== "dev" &&
+      signInData.email === "eriks@gmail.com") ||
+    signInData.email === "test@test.com"
+  ) {
+    return res.status(401).send({ errors: ["No"] });
+  }
 
   const Account = await AccountModel.findOne({
     email: signInData.email,

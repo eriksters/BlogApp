@@ -11,6 +11,7 @@ export const signIn = async (email, password) => {
   return {
     token: response.data.token,
     username: response.data.username,
+    _id: response.data._id,
   };
 };
 
@@ -26,5 +27,6 @@ export const signUp = async (email, password, username) => {
   return {
     token: response.data.token,
     username: response.data.username,
+    _id: response.data._id,
   };
 };

@@ -1,14 +1,20 @@
 import getInstance from "./AppAPI";
 
-export const getNewBlogPosts = async (lastPostTime) => {
+export const getNewBlogPosts = async (lastPostTime, filters) => {
   const api = getInstance();
 
-  const response = await api.get("/blogposts", {
-    params: {
-      sortBy: "new",
-      lastPostTime: lastPostTime || Date.now(),
-    },
-  });
+  const params = {
+    sortBy: "new",
+    lastPostTime: lastPostTime || Date.now(),
+  };
+
+  if (filters?.createdBy) {
+    params.createdBy = filters.createdBy;
+  }
+
+  console.log(params);
+
+  const response = await api.get("/blogposts", { params });
 
   return response.data.BlogPosts;
 };

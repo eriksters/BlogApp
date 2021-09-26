@@ -32,20 +32,87 @@ import NewestBlogPostListTab from "./NewestBlogPostListTab";
 import PopularBlogPostListTab from "./PopularBlogPostListTab";
 import TopBlogPostListTab from "./TopBlogPostListTab";
 import MyBlogPostListTab from "./MyBlogPostListTab";
+import EditBlogPostScreen from "./EditBlogPostScreen";
 import SignInScreen from "./SignInScreen";
 import SignUpScreen from "./SignUpScreen";
 import { createStackNavigator } from "@react-navigation/stack";
 import { useSelector } from "react-redux";
+import TestTab from "./TestTab";
 
 const NavigationBase = () => {
   const Tab = createBottomTabNavigator();
 
-  const Stack = createStackNavigator();
+  const AuthStack = createStackNavigator();
+  const MainStack = createStackNavigator();
 
   const account = useSelector((state) => state.account);
 
   const onTestPress = () => {
     console.log(account);
+  };
+
+  const TabComponent = () => {
+    return (
+      <Tab.Navigator
+        initialRouteName={"Newest"}
+        screenOptions={{ headerShown: false }}
+      >
+        <Tab.Screen
+          name='Newest'
+          component={NewestBlogPostListTab}
+          options={{
+            tabBarIcon: ({ color, size }) => (
+              <MaterialCommunityIcons
+                name='newspaper'
+                size={size}
+                color={color}
+              />
+            ),
+            tabBarLabel: "New",
+          }}
+        />
+        <Tab.Screen
+          name='Popular'
+          component={PopularBlogPostListTab}
+          options={{
+            tabBarIcon: ({ color, size }) => (
+              <Octicons name='flame' size={size} color={color} />
+            ),
+          }}
+        />
+        <Tab.Screen
+          name='Top'
+          component={TopBlogPostListTab}
+          options={{
+            tabBarIcon: ({ color, size }) => (
+              <Ionicons name='ribbon-sharp' size={size} color={color} />
+            ),
+          }}
+        />
+        <Tab.Screen
+          name='Mine'
+          component={MyBlogPostListTab}
+          options={{
+            tabBarIcon: ({ color, size }) => (
+              <MaterialIcons name='account-circle' size={size} color={color} />
+            ),
+          }}
+        />
+        <Tab.Screen
+          name='Test'
+          component={TestTab}
+          options={{
+            tabBarIcon: ({ color, size }) => (
+              <MaterialCommunityIcons
+                name='plus-box'
+                size={size}
+                color={color}
+              />
+            ),
+          }}
+        />
+      </Tab.Navigator>
+    );
   };
 
   return (
@@ -59,77 +126,22 @@ const NavigationBase = () => {
       />
       <NavigationContainer>
         {account.signInStatus === "none" ? (
-          <Stack.Navigator
+          <AuthStack.Navigator
             screenOptions={{ headerShown: false }}
             initialRouteName='SignIn'
           >
-            <Stack.Screen name='SignIn' component={SignInScreen} />
-            <Stack.Screen name='SignUp' component={SignUpScreen} />
-          </Stack.Navigator>
+            <AuthStack.Screen name='SignIn' component={SignInScreen} />
+            <AuthStack.Screen name='SignUp' component={SignUpScreen} />
+          </AuthStack.Navigator>
         ) : (
-          <Tab.Navigator
-            initialRouteName={"Newest"}
+          <MainStack.Navigator
+            initialRouteName='Home'
             screenOptions={{ headerShown: false }}
           >
-            <Tab.Screen
-              name='Newest'
-              component={NewestBlogPostListTab}
-              options={{
-                tabBarIcon: ({ color, size }) => (
-                  <MaterialCommunityIcons
-                    name='newspaper'
-                    size={size}
-                    color={color}
-                  />
-                ),
-                tabBarLabel: "New",
-              }}
-            />
-            <Tab.Screen
-              name='Popular'
-              component={PopularBlogPostListTab}
-              options={{
-                tabBarIcon: ({ color, size }) => (
-                  <Octicons name='flame' size={size} color={color} />
-                ),
-              }}
-            />
-            <Tab.Screen
-              name='Top'
-              component={TopBlogPostListTab}
-              options={{
-                tabBarIcon: ({ color, size }) => (
-                  <Ionicons name='ribbon-sharp' size={size} color={color} />
-                ),
-              }}
-            />
-            <Tab.Screen
-              name='Mine'
-              component={MyBlogPostListTab}
-              options={{
-                tabBarIcon: ({ color, size }) => (
-                  <MaterialIcons
-                    name='account-circle'
-                    size={size}
-                    color={color}
-                  />
-                ),
-              }}
-            />
-            <Tab.Screen
-              name='Remove Me!'
-              component={CreateBlogPostScreen}
-              options={{
-                tabBarIcon: ({ color, size }) => (
-                  <MaterialCommunityIcons
-                    name='plus-box'
-                    size={size}
-                    color={color}
-                  />
-                ),
-              }}
-            />
-          </Tab.Navigator>
+            <MainStack.Screen name='Home' component={TabComponent} />
+            <MainStack.Screen name='Create' component={CreateBlogPostScreen} />
+            <MainStack.Screen name='Edit' component={EditBlogPostScreen} />
+          </MainStack.Navigator>
         )}
       </NavigationContainer>
     </>

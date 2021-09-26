@@ -8,7 +8,7 @@ import getEnvVars from "../environment";
 import BlogPostEditor from "../Components/BlogPostEditor";
 import { createBlogPost } from "../API/BlogPostEndpoint";
 
-const CreateBlogPostScreen = ({ navigation, route, onSuccess }) => {
+const CreateBlogPostScreen = ({ navigation, route }) => {
   const [BlogPost, setBlogPost] = useState({});
   const [saving, setSaving] = useState(false);
 
@@ -40,7 +40,7 @@ const CreateBlogPostScreen = ({ navigation, route, onSuccess }) => {
         state.ThumbnailURL
       );
 
-      navigation.navigate({ name: "List", params: { NewPost: true } });
+      navigation.navigate({ name: "Mine", params: { NewPost: true } });
     } catch (err) {
       console.log("Error saving post\n", err);
     }

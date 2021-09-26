@@ -6,6 +6,7 @@
   "main": "./src/App.mjs",
   "scripts": {
     "start": "set NODE_ENV=dev& node src/App.mjs",
+    "start_prod": "node src/App.mjs",
     "dev": "set DEBUG=express:*&set NODE_ENV=dev&nodemon src/App.mjs",
     "tunnel": "ngrok http -region=eu 3000"
   },
