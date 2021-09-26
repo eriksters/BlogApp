@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { View, Text, StyleSheet, FlatList } from "react-native";
 import BlogPostListItem from "./BlogPostListItem";
 import { ActivityIndicator, Colors, IconButton } from "react-native-paper";
@@ -26,6 +26,10 @@ const BlogPostList = ({ BlogPosts, loadMore, refresh, endReached }) => {
       setRefreshing(false);
     }
   };
+
+  useEffect(() => {
+    onRefresh();
+  }, []);
 
   const ListEmptyComponent = () => (
     <View style={styles.emptyListContainer}>

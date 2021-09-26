@@ -6,53 +6,38 @@ import { getNewBlogPosts } from "../API/BlogPostEndpoint";
 
 const NewestBlogPostListTab = ({ navigation }) => {
   const [BlogPosts, setBlogPosts] = useState([]);
-  const [refreshing, setRefreshing] = useState(false);
-  const [loadingMore, setLoadingMore] = useState(false);
   const [endReached, setEndReached] = useState(false);
 
   const refresh = async () => {
-    if (!loadingMore && !refreshing) {
-      setRefreshing(true);
+    setEndReached(false);
 
-      setBlogPosts(await getNewBlogPosts());
+    const posts = await getNewBlogPosts();
+    setBlogPosts(posts);
 
-      setEndReached(false);
-      setRefreshing(false);
+    if (posts.length === 0) {
+      setEndReached(true);
     }
+
+    console.log(Date.now());
   };
 
   const loadMore = async () => {
-    if (!endReached && !refreshing) {
-      setLoadingMore(true);
+    const newPosts = await getNewBlogPosts(
+      BlogPosts[BlogPosts.length - 1].CreateTime
+    );
 
-      const newPosts = await getNewBlogPosts(
-        BlogPosts[BlogPosts.length - 1].CreateTime
-      );
-      if (newPosts.length > 0) {
-        setBlogPosts([...BlogPosts, ...newPosts]);
-      } else {
-        setEndReached(true);
-      }
-
-      setLoadingMore(false);
+    if (newPosts.length > 0) {
+      setBlogPosts([...BlogPosts, ...newPosts]);
+    } else {
+      setEndReached(true);
     }
   };
-
-  const onCreatePressed = () => {
-    navigation.navigate("Create");
-  };
-
-  useEffect(() => {
-    refresh();
-  }, []);
 
   return (
     <BlogPostList
       BlogPosts={BlogPosts}
       loadMore={loadMore}
       refresh={refresh}
-      loadingMore={loadingMore}
-      refreshing={refreshing}
       endReached={endReached}
     />
   );

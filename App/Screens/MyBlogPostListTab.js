@@ -42,10 +42,6 @@ const MyBlogPostListTab = ({ navigation, route }) => {
   };
 
   useEffect(() => {
-    refresh();
-  }, []);
-
-  useEffect(() => {
     if (route.params?.NewPost) {
       console.log("There is a new post");
       refresh();
@@ -66,8 +62,6 @@ const MyBlogPostListTab = ({ navigation, route }) => {
         BlogPosts={BlogPosts}
         loadMore={loadMore}
         refresh={refresh}
-        loadingMore={loadingMore}
-        refreshing={refreshing}
         endReached={endReached}
       />
       <IconButton
