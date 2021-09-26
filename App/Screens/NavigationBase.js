@@ -98,6 +98,7 @@ const NavigationBase = () => {
               <MaterialIcons name='account-circle' size={size} color={color} />
             ),
           }}
+          initialParams={{ creatorId: account._id }}
         />
         <Tab.Screen
           name='Test'
@@ -143,6 +144,7 @@ const NavigationBase = () => {
             <MainStack.Screen name='Create' component={CreateBlogPostScreen} />
             <MainStack.Screen name='Edit' component={EditBlogPostScreen} />
             <MainStack.Screen name='View' component={ViewBlogPostScreen} />
+            <MainStack.Screen name='CreatedBy' component={MyBlogPostListTab} />
           </MainStack.Navigator>
         )}
       </NavigationContainer>

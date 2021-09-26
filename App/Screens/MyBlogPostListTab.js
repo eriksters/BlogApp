@@ -13,11 +13,11 @@ const MyBlogPostListTab = ({ navigation, route }) => {
   const [loadingMore, setLoadingMore] = useState(false);
   const [endReached, setEndReached] = useState(false);
 
-  const account = useSelector((state) => state.account);
+  const creatorId = route.params?.creatorId;
 
   const refresh = async () => {
     setEndReached(false);
-    const posts = await getNewBlogPosts(undefined, { createdBy: account._id });
+    const posts = await getNewBlogPosts(undefined, { createdBy: creatorId });
     setBlogPosts(posts);
     if (posts.length === 0) {
       setEndReached(true);
@@ -27,7 +27,7 @@ const MyBlogPostListTab = ({ navigation, route }) => {
   const loadMore = async () => {
     const newPosts = await getNewBlogPosts(
       BlogPosts[BlogPosts.length - 1].CreateTime,
-      { createdBy: account._id }
+      { createdBy: creatorId }
     );
 
     if (newPosts.length > 0) {

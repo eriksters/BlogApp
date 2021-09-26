@@ -5,9 +5,6 @@ import {
   Image,
   StyleSheet,
   TouchableOpacity,
-  TouchableHighlight,
-  TouchableHighlightComponent,
-  TouchableWithoutFeedback,
   Alert,
 } from "react-native";
 import { useState } from "react";
@@ -18,6 +15,7 @@ import getEnvVars from "../environment";
 import axios from "axios";
 import { useNavigation } from "@react-navigation/core";
 import { deleteBlogPost } from "../API/BlogPostEndpoint";
+import { Colors } from "react-native-paper";
 
 const BlogPostListItem = ({ BlogPost, onDeleteCallback }) => {
   const navigation = useNavigation();
@@ -53,6 +51,13 @@ const BlogPostListItem = ({ BlogPost, onDeleteCallback }) => {
     navigation.navigate({ name: "View", params: { BlogPost } });
   };
 
+  const onCreatorPressed = () => {
+    navigation.navigate({
+      name: "CreatedBy",
+      params: { creatorId: BlogPost.CreatedBy },
+    });
+  };
+
   return (
     <View style={styles.container}>
       <TouchableOpacity activeOpacity={0.8} onPress={onViewPressed}>
@@ -82,6 +87,13 @@ const BlogPostListItem = ({ BlogPost, onDeleteCallback }) => {
         easing='quad'
         style={styles.collapsible}
       >
+        <TouchableOpacity
+          style={styles.creatorContainer}
+          onPress={onCreatorPressed}
+        >
+          <Text>By </Text>
+          <Text style={styles.creator}>{BlogPost.CreatedByUsername}</Text>
+        </TouchableOpacity>
         <Text style={styles.description}>{BlogPost.Description}</Text>
         <View style={styles.optionsBar}>
           <TouchableOpacity style={styles.option} onPress={onEditPress}>
@@ -136,6 +148,17 @@ const styles = StyleSheet.create({
   title: {
     fontFamily: "Baskervville_400Regular",
     fontSize: 22,
+  },
+  creatorContainer: {
+    alignSelf: "flex-end",
+    alignItems: "flex-end",
+    paddingHorizontal: 20,
+    paddingVertical: 5,
+    flexDirection: "row",
+  },
+  creator: {
+    fontWeight: "bold",
+    color: Colors.blue500,
   },
   description: {
     marginTop: 5,
