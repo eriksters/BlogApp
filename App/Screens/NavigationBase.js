@@ -27,6 +27,7 @@ import { Provider as ReduxProvider } from "react-redux";
 import { configureStore } from "@reduxjs/toolkit";
 import AccountReducer from "../Redux/AccountSlice";
 
+import ViewBlogPostScreen from "./ViewBlogPostScreen";
 import CreateBlogPostScreen from "./CreateBlogPostScreen";
 import NewestBlogPostListTab from "./NewestBlogPostListTab";
 import PopularBlogPostListTab from "./PopularBlogPostListTab";
@@ -141,6 +142,7 @@ const NavigationBase = () => {
             <MainStack.Screen name='Home' component={TabComponent} />
             <MainStack.Screen name='Create' component={CreateBlogPostScreen} />
             <MainStack.Screen name='Edit' component={EditBlogPostScreen} />
+            <MainStack.Screen name='View' component={ViewBlogPostScreen} />
           </MainStack.Navigator>
         )}
       </NavigationContainer>
