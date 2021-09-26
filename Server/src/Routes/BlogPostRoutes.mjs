@@ -5,12 +5,45 @@ import * as fs from "fs/promises";
 import * as path from "path";
 import { TempStore, saveMulterFile } from "../Middleware/Multer.mjs";
 import RequireAuth from "../Middleware/RequireAuth.mjs";
+import e from "express";
 
 const BlogPostModel = mongoose.model("BlogPost");
+const AccountModel = mongoose.model("Account");
 const BlogPostRoutes = express.Router();
 
 const createAbsoluteURLFromRelative = (relativeURL) => {
   return `${process.env.SERVER_BASE_URL}/${relativeURL}`;
+};
+
+const assignUsernames = async (posts) => {
+  //  Array of unique creators
+  const creators = posts
+    .map((post) => {
+      return post.CreatedBy;
+    })
+    .filter(
+      (value, index, array) =>
+        array.indexOf(value) === index && value !== undefined
+    );
+
+  try {
+    const accounts = await AccountModel.find({
+      _id: {
+        $in: creators,
+      },
+    }).exec();
+
+    posts = posts.map((post) => ({
+      ...post,
+      CreatedByUsername: accounts.find(
+        (acc) => acc._id.toString() === post.CreatedBy
+      ).username,
+    }));
+  } catch (err) {
+    console.log(err);
+  }
+
+  return posts;
 };
 
 //  Get next 10 Blog Posts
@@ -43,11 +76,18 @@ BlogPostRoutes.get("/", async (req, res) => {
     res.sendStatus(500);
   }
 
-  //  Format and send results
-  results.forEach(
-    (post) =>
-      (post.ThumbnailURL = createAbsoluteURLFromRelative(post.ThumbnailURL))
-  );
+  ////  Format
+  results = results.map((e) => e.toObject());
+
+  //  Format the URLs with server's current URL
+  results = results.map((post) => ({
+    ...post,
+    ThumbnailURL: createAbsoluteURLFromRelative(post.ThumbnailURL),
+  }));
+
+  //  Get usernames for the posts
+  results = await assignUsernames(results);
+
   res.status(200).send({ BlogPosts: results });
 });
 
