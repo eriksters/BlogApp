@@ -55,6 +55,7 @@ const slice = createSlice({
     loading: false,
     username: null,
     token: null,
+    _id: null,
   },
 
   reducers: {
@@ -62,6 +63,7 @@ const slice = createSlice({
       state.username = null;
       state.signInStatus = "none";
       state.token = null;
+      state._id = null;
     },
     guestLogin(state, action) {
       console.log(state);
@@ -82,6 +84,7 @@ const slice = createSlice({
       state.token = action.payload.token;
       state.signInStatus = "SignedIn";
       state.loading = false;
+      state._id = action.payload._id;
     });
     builder.addCase(signUp.rejected, (state, action) => {
       state.errors = action.payload.errors;
@@ -99,6 +102,7 @@ const slice = createSlice({
       state.signInStatus = "SignedIn";
       state.token = action.payload.token;
       state.loading = false;
+      state._id = action.payload._id;
     });
     builder.addCase(signIn.rejected, (state, action) => {
       state.errors = action.payload.errors;

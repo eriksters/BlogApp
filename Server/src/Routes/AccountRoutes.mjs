@@ -122,6 +122,7 @@ AccountRoutes.post("/signup", async (req, res) => {
 
   const data = {
     username: signUpData.username,
+    _id: CreatedAccount._id,
     token,
   };
 
@@ -150,6 +151,7 @@ AccountRoutes.post("/signin", async (req, res) => {
 
   return res.status(200).send({
     token,
+    _id: Account._id,
     username: Account.username,
   });
 });
