@@ -16,15 +16,14 @@ import axios from "axios";
 import { useNavigation } from "@react-navigation/core";
 import { deleteBlogPost } from "../API/BlogPostEndpoint";
 import { Colors } from "react-native-paper";
+import { useSelector } from "react-redux";
 
 const BlogPostListItem = ({ BlogPost, onDeleteCallback }) => {
   const navigation = useNavigation();
 
   const [expanded, setExpanded] = useState(false);
 
-  const API_URL = getEnvVars().API_URL;
-
-  const api = axios.create({ baseURL: API_URL });
+  const account = useSelector((state) => state.account);
 
   const onDeletePress = async () => {
     console.log("alerting");
@@ -94,15 +93,19 @@ const BlogPostListItem = ({ BlogPost, onDeleteCallback }) => {
           <Text>By </Text>
           <Text style={styles.creator}>{BlogPost.CreatedByUsername}</Text>
         </TouchableOpacity>
-        <Text style={styles.description}>{BlogPost.Description}</Text>
-        <View style={styles.optionsBar}>
-          <TouchableOpacity style={styles.option} onPress={onEditPress}>
-            <Entypo name='edit' size={24} color='#555' />
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.option} onPress={onDeletePress}>
-            <MaterialIcons name='delete' size={24} color='#555' />
-          </TouchableOpacity>
-        </View>
+        {BlogPost.Description ? (
+          <Text style={styles.description}>{BlogPost.Description}</Text>
+        ) : null}
+        {account._id === BlogPost.CreatedBy ? (
+          <View style={styles.optionsBar}>
+            <TouchableOpacity style={styles.option} onPress={onEditPress}>
+              <Entypo name='edit' size={24} color='#555' />
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.option} onPress={onDeletePress}>
+              <MaterialIcons name='delete' size={24} color='#555' />
+            </TouchableOpacity>
+          </View>
+        ) : null}
       </Collapsible>
 
       <TouchableOpacity
@@ -127,6 +130,16 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     borderRadius: 10,
     overflow: "hidden",
+
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.23,
+    shadowRadius: 2.62,
+
+    elevation: 4,
   },
   imageContainer: {
     height: 130,
@@ -148,6 +161,11 @@ const styles = StyleSheet.create({
   title: {
     fontFamily: "Baskervville_400Regular",
     fontSize: 22,
+    marginBottom: 10,
+  },
+  collapsible: {
+    borderTopColor: "#AAA",
+    borderTopWidth: 1,
   },
   creatorContainer: {
     alignSelf: "flex-end",
@@ -164,8 +182,6 @@ const styles = StyleSheet.create({
     marginTop: 5,
     paddingTop: 5,
     marginHorizontal: 5,
-    borderTopColor: "#AAA",
-    borderTopWidth: 1,
     fontSize: 18,
     fontFamily: "Baskervville_400Regular",
   },
@@ -174,13 +190,14 @@ const styles = StyleSheet.create({
     justifyContent: "space-evenly",
   },
   option: {
-    paddingTop: 15,
+    paddingTop: 20,
     justifyContent: "center",
     flexGrow: 1,
     alignItems: "center",
   },
   expandTouchArea: {
-    paddingVertical: 5,
+    paddingBottom: 5,
+    paddingTop: 16,
     alignItems: "center",
   },
 });

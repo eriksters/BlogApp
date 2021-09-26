@@ -81,6 +81,7 @@ const BlogPostList = ({ BlogPosts, loadMore, refresh, endReached }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    margin: 8,
   },
   list: {
     paddingTop: 50,
@@ -89,7 +90,7 @@ const styles = StyleSheet.create({
     marginBottom: 15,
   },
   itemSeparator: {
-    height: 10,
+    height: 16,
   },
   emptyListContainer: {
     justifyContent: "center",
