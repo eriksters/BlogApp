@@ -17,6 +17,7 @@ import { useNavigation } from "@react-navigation/core";
 import { deleteBlogPost } from "../API/BlogPostEndpoint";
 import { Colors } from "react-native-paper";
 import { useSelector } from "react-redux";
+import LikeCounter from "./LikeCounter";
 
 const BlogPostListItem = ({ BlogPost, onDeleteCallback }) => {
   const navigation = useNavigation();
@@ -63,6 +64,7 @@ const BlogPostListItem = ({ BlogPost, onDeleteCallback }) => {
         <View>
           {BlogPost.ThumbnailURL ? (
             <View style={styles.imageContainer}>
+              <LikeCounter value={BlogPost.likeCount} style={styles.likes} />
               <Image
                 source={{ uri: BlogPost.ThumbnailURL }}
                 style={styles.image}
@@ -147,6 +149,12 @@ const styles = StyleSheet.create({
   image: {
     width: "100%",
     height: "100%",
+  },
+  likes: {
+    position: "absolute",
+    top: 5,
+    right: 5,
+    zIndex: 2,
   },
   linearGradient: {
     position: "absolute",
