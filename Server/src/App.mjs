@@ -25,14 +25,14 @@ const app = express();
 app.use(express.json());
 
 //  Routes
-app.get("/", (req, res) => {
+app.get("/api", (req, res) => {
   res.send("Hello world");
 });
 
-app.use(express.static(path.resolve() + "\\public"));
+app.use(express.static(path.resolve() + "/public"));
 
-app.use("/blogposts", BlogPostRoutes);
-app.use("/account", AccountRoutes);
+app.use("/api/blogposts", BlogPostRoutes);
+app.use("/api/account", AccountRoutes);
 
 async function main() {
   try {
