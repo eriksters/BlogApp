@@ -10,11 +10,14 @@ import { Provider as ReduxProvider } from "react-redux";
 
 import reduxStore from "./Redux/Store";
 import NavigationBase from "./Screens/NavigationBase";
+import { setStore } from "./API/AppAPI";
 
 export default function App() {
   let [fontsLoaded] = useFonts({
     Baskervville_400Regular,
   });
+
+  setStore(reduxStore);
 
   if (fontsLoaded) {
     return (

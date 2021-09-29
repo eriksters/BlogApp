@@ -1,4 +1,4 @@
-import getInstance from "./AppAPI";
+import getInstance, { getStore } from "./AppAPI";
 
 export const signIn = async (email, password) => {
   const api = getInstance();
