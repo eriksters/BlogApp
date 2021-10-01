@@ -2,38 +2,22 @@ import React, { useState, useEffect } from "react";
 import { View, Text, StyleSheet, FlatList } from "react-native";
 import BlogPostListItem from "./BlogPostListItem";
 import { ActivityIndicator, Colors, IconButton } from "react-native-paper";
+import { useSelector } from "react-redux";
 
-const BlogPostList = ({ BlogPosts, loadMore, refresh, endReached }) => {
-  const [loadingMore, setLoadingMore] = useState(false);
-  const [refreshing, setRefreshing] = useState(false);
+const BlogPostList = ({ loadMore, refresh }) => {
+  const postsState = useSelector((state) => state.blogPosts);
 
   const onEndReached = async () => {
-    if (!endReached && !refreshing && !loadingMore) {
-      setLoadingMore(true);
-
-      await loadMore();
-
-      setLoadingMore(false);
-    }
+    // loadMore();
   };
 
   const onRefresh = async () => {
-    if (!loadingMore && !refreshing) {
-      setRefreshing(true);
-
-      await refresh();
-
-      setRefreshing(false);
-    }
+    refresh();
   };
-
-  useEffect(() => {
-    onRefresh();
-  }, []);
 
   const ListEmptyComponent = () => (
     <View style={styles.emptyListContainer}>
-      {endReached ? (
+      {postsState.endReached ? (
         <>
           <Text style={styles.emptyListText}>Nothing to show here</Text>
           <Text style={styles.emptyListText}>Pull down to reload</Text>
@@ -44,13 +28,13 @@ const BlogPostList = ({ BlogPosts, loadMore, refresh, endReached }) => {
 
   const ListFooterComponent = () => (
     <View style={styles.footer}>
-      {endReached ? (
+      {postsState.endReached ? (
         <Text>Nothing more to load</Text>
       ) : (
         <ActivityIndicator
           style={styles.loadingMoreIndicator}
           size={24}
-          animating={loadingMore}
+          animating={postsState.loadingMore}
           color={Colors.deepPurple500}
         />
       )}
@@ -62,10 +46,10 @@ const BlogPostList = ({ BlogPosts, loadMore, refresh, endReached }) => {
   return (
     <View style={styles.container}>
       <FlatList
-        refreshing={refreshing}
-        onRefresh={() => refresh()}
+        refreshing={postsState.refreshing}
+        onRefresh={onRefresh}
         contentContainerStyle={styles.list}
-        data={BlogPosts}
+        data={postsState.data}
         renderItem={({ item }) => {
           return (
             <BlogPostListItem BlogPost={item} onDeleteCallback={refresh} />

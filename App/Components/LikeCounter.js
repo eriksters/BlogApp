@@ -7,7 +7,7 @@ const LikeCounter = ({ style, value }) => {
   return (
     <TouchableOpacity
       style={{ ...style, ...styles.touchableContainer }}
-      onPress={console.log("Pressed")}
+      onPress={() => console.log("Pressed")}
     >
       <View style={styles.innerContainer}>
         <Ionicons name='md-thumbs-up' size={20} color={Colors.white} />

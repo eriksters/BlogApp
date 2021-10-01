@@ -3,44 +3,26 @@ import { View, Text, StyleSheet } from "react-native";
 import { createStackNavigator } from "@react-navigation/stack";
 import BlogPostList from "../Components/BlogPostList";
 import { getNewBlogPosts } from "../API/BlogPostEndpoint";
+import { useSelector, useDispatch } from "react-redux";
+import { refresh } from "../Redux/BlogPostSlice";
 
 const NewestBlogPostListTab = ({ navigation }) => {
-  const [BlogPosts, setBlogPosts] = useState([]);
-  const [endReached, setEndReached] = useState(false);
+  const dispatch = useDispatch();
 
-  const refresh = async () => {
-    setEndReached(false);
-
-    const posts = await getNewBlogPosts();
-    setBlogPosts(posts);
-
-    if (posts.length === 0) {
-      setEndReached(true);
-    }
-
-    console.log(Date.now());
+  const refreshPosts = () => {
+    console.log("Tab refresh");
+    dispatch(refresh({ sortBy: "new", filters: null }));
   };
 
-  const loadMore = async () => {
-    const newPosts = await getNewBlogPosts(
-      BlogPosts[BlogPosts.length - 1].CreateTime
-    );
-
-    if (newPosts.length > 0) {
-      setBlogPosts([...BlogPosts, ...newPosts]);
-    } else {
-      setEndReached(true);
-    }
+  const loadMorePosts = () => {
+    console.log("Tab load more");
   };
 
-  return (
-    <BlogPostList
-      BlogPosts={BlogPosts}
-      loadMore={loadMore}
-      refresh={refresh}
-      endReached={endReached}
-    />
-  );
+  // useEffect(() => {
+  //   refreshPosts();
+  // }, []);
+
+  return <BlogPostList loadMore={loadMorePosts} refresh={refreshPosts} />;
 };
 
 const styles = StyleSheet.create({
