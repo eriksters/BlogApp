@@ -4,7 +4,7 @@ import { createStackNavigator } from "@react-navigation/stack";
 import BlogPostList from "../Components/BlogPostList";
 import { getNewBlogPosts } from "../API/BlogPostEndpoint";
 import { useSelector, useDispatch } from "react-redux";
-import { refresh } from "../Redux/BlogPostSlice";
+import { loadMore, refresh } from "../Redux/BlogPostSlice";
 
 const NewestBlogPostListTab = ({ navigation }) => {
   const dispatch = useDispatch();
@@ -16,11 +16,8 @@ const NewestBlogPostListTab = ({ navigation }) => {
 
   const loadMorePosts = () => {
     console.log("Tab load more");
+    dispatch(loadMore({ sortBy: "new", filters: null }));
   };
-
-  // useEffect(() => {
-  //   refreshPosts();
-  // }, []);
 
   return <BlogPostList loadMore={loadMorePosts} refresh={refreshPosts} />;
 };

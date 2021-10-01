@@ -8,7 +8,7 @@ const BlogPostList = ({ loadMore, refresh }) => {
   const postsState = useSelector((state) => state.blogPosts);
 
   const onEndReached = async () => {
-    // loadMore();
+    loadMore();
   };
 
   const onRefresh = async () => {

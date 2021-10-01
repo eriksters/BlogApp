@@ -64,7 +64,7 @@ const BlogPostListItem = ({ BlogPost, onDeleteCallback }) => {
         <View>
           {BlogPost.ThumbnailURL ? (
             <View style={styles.imageContainer}>
-              <LikeCounter value={BlogPost.likeCount} style={styles.likes} />
+              <LikeCounter value={BlogPost.LikeCount} style={styles.likes} />
               <Image
                 source={{ uri: BlogPost.ThumbnailURL }}
                 style={styles.image}
