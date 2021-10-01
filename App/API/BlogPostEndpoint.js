@@ -12,16 +12,13 @@ export const getBlogPosts = async (sortBy, filters, page) => {
 
   params = {
     sortBy: sortBy,
-    lastPostTime: Date.now(),
     ...filters,
     page: page,
   };
 
-  console.log(params);
-
   response = await api.get("/blogposts", { params });
 
-  return response.data.BlogPosts;
+  return response.data;
 };
 
 export const createBlogPost = async (

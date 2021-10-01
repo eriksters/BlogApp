@@ -25,7 +25,7 @@ export const loadMore = createAsyncThunk(
   "blogPosts/loadMore",
   async (query, thunkAPI) => {
     const state = thunkAPI.getState().blogPosts;
-    if (!state.refreshing) {
+    if (!state.refreshing && !state.endReached) {
       console.log("Loading More");
       try {
         return await API_getBlogPosts(
@@ -46,9 +46,8 @@ export const loadMore = createAsyncThunk(
         }
       }
     } else {
-      console.log("tried loading more while refreshing");
       return thunkAPI.rejectWithValue({
-        errors: ["Can not load more while refreshing"],
+        errors: [],
       });
     }
   }
@@ -81,9 +80,9 @@ const slice = createSlice({
     builder.addCase(refresh.fulfilled, (state, action) => {
       state.errors = [];
       state.refreshing = false;
-      state.data = action.payload;
-      state.currentPage = 1;
-      if (action.payload.length < 10) state.endReached = true;
+      state.data = action.payload.data;
+      state.currentPage = action.payload.page;
+      if (action.payload.data.length < 10) state.endReached = true;
     });
     builder.addCase(refresh.rejected, (state, action) => {
       state.errors = action.payload.errors;
@@ -98,9 +97,10 @@ const slice = createSlice({
     builder.addCase(loadMore.fulfilled, (state, action) => {
       state.errors = [];
       state.loadingMore = false;
-      state.data = [...state.data, ...action.payload];
-      state.currentPage = state.currentPage + 1;
-      if (action.payload.length < 10) state.endReached = true;
+      state.data = [...state.data, ...action.payload.data];
+      state.currentPage = action.payload.page;
+      console.log(action.payload.data.length);
+      if (action.payload.data.length < 10) state.endReached = true;
     });
     builder.addCase(loadMore.rejected, (state, action) => {
       state.errors = action.payload.errors;

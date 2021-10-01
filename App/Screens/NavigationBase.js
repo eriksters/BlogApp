@@ -1,5 +1,5 @@
 import { StatusBar } from "expo-status-bar";
-import React, { useState } from "react";
+import React from "react";
 import { StyleSheet, Text, View } from "react-native";
 import {
   useFonts,
@@ -40,81 +40,78 @@ import { createStackNavigator } from "@react-navigation/stack";
 import { useSelector } from "react-redux";
 import TestTab from "./TestTab";
 
-const NavigationBase = () => {
+const TabComponent = () => {
   const Tab = createBottomTabNavigator();
+  const account = useSelector((state) => state.account);
+  return (
+    <Tab.Navigator
+      initialRouteName={"Newest"}
+      screenOptions={{ headerShown: false }}
+    >
+      <Tab.Screen
+        name='Newest'
+        component={NewestBlogPostListTab}
+        options={{
+          tabBarIcon: ({ color, size }) => (
+            <MaterialCommunityIcons
+              name='newspaper'
+              size={size}
+              color={color}
+            />
+          ),
+          tabBarLabel: "New",
+        }}
+      />
+      <Tab.Screen
+        name='Popular'
+        component={PopularBlogPostListTab}
+        options={{
+          tabBarIcon: ({ color, size }) => (
+            <Octicons name='flame' size={size} color={color} />
+          ),
+        }}
+      />
+      <Tab.Screen
+        name='Top'
+        component={TopBlogPostListTab}
+        options={{
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name='ribbon-sharp' size={size} color={color} />
+          ),
+        }}
+      />
+      <Tab.Screen
+        name='Mine'
+        component={MyBlogPostListTab}
+        options={{
+          tabBarIcon: ({ color, size }) => (
+            <MaterialIcons name='account-circle' size={size} color={color} />
+          ),
+        }}
+        initialParams={{ creatorId: account._id }}
+      />
+      <Tab.Screen
+        name='Test'
+        component={TestTab}
+        options={{
+          tabBarIcon: ({ color, size }) => (
+            <MaterialCommunityIcons name='plus-box' size={size} color={color} />
+          ),
+        }}
+      />
+    </Tab.Navigator>
+  );
+};
 
+const NavigationBase = () => {
   const AuthStack = createStackNavigator();
   const MainStack = createStackNavigator();
 
   const account = useSelector((state) => state.account);
+  const posts = useSelector((state) => state.blogPosts);
 
   const onTestPress = () => {
-    console.log(account);
-  };
-
-  const TabComponent = () => {
-    return (
-      <Tab.Navigator
-        initialRouteName={"Newest"}
-        screenOptions={{ headerShown: false }}
-      >
-        <Tab.Screen
-          name='Newest'
-          component={NewestBlogPostListTab}
-          options={{
-            tabBarIcon: ({ color, size }) => (
-              <MaterialCommunityIcons
-                name='newspaper'
-                size={size}
-                color={color}
-              />
-            ),
-            tabBarLabel: "New",
-          }}
-        />
-        <Tab.Screen
-          name='Popular'
-          component={PopularBlogPostListTab}
-          options={{
-            tabBarIcon: ({ color, size }) => (
-              <Octicons name='flame' size={size} color={color} />
-            ),
-          }}
-        />
-        <Tab.Screen
-          name='Top'
-          component={TopBlogPostListTab}
-          options={{
-            tabBarIcon: ({ color, size }) => (
-              <Ionicons name='ribbon-sharp' size={size} color={color} />
-            ),
-          }}
-        />
-        <Tab.Screen
-          name='Mine'
-          component={MyBlogPostListTab}
-          options={{
-            tabBarIcon: ({ color, size }) => (
-              <MaterialIcons name='account-circle' size={size} color={color} />
-            ),
-          }}
-          initialParams={{ creatorId: account._id }}
-        />
-        <Tab.Screen
-          name='Test'
-          component={TestTab}
-          options={{
-            tabBarIcon: ({ color, size }) => (
-              <MaterialCommunityIcons
-                name='plus-box'
-                size={size}
-                color={color}
-              />
-            ),
-          }}
-        />
-      </Tab.Navigator>
-    );
+    console.log(posts);
   };
 
   return (

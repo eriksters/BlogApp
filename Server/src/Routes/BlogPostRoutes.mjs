@@ -53,24 +53,27 @@ BlogPostRoutes.get("/", async (req, res) => {
   let query;
   let results;
 
+  params.page = Number(params.page);
+  if (params.page < 1) {
+    params.page = 1;
+  }
+
   //  Construct the query
   query = BlogPostModel.find({});
-  if (params.sortBy === "new") {
-    const lastPostTime = params.lastPostTime || Date.now();
 
-    query
-      .where("CreateTime")
-      .lt(lastPostTime)
-      .sort({ CreateTime: "descending" });
+  if (params.sortBy === "new") {
+    query.sort({ CreateTime: "descending" });
   }
 
   if (params.createdBy) {
     query.where("CreatedBy").equals(params.createdBy);
   }
 
+  query.skip(10 * (params.page - 1)).limit(10);
+
   //  Execute query
   try {
-    results = await query.limit(10).exec();
+    results = await query.exec();
   } catch (err) {
     console.error("Failed getting posts. ", err);
     res.sendStatus(500);
@@ -88,7 +91,7 @@ BlogPostRoutes.get("/", async (req, res) => {
   //  Get usernames for the posts
   results = await assignUsernames(results);
 
-  res.status(200).send({ BlogPosts: results });
+  res.status(200).send({ data: results, page: params.page });
 });
 
 BlogPostRoutes.post(
