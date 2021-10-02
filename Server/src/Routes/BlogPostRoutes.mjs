@@ -217,4 +217,32 @@ BlogPostRoutes.delete("/:id", RequireAuth, async (req, res) => {
   }
 });
 
+BlogPostRoutes.post("/:id/likes", RequireAuth, async (req, res) => {
+  const id = req.params.id;
+
+  const post = await BlogPostModel.findOne({ _id: id }).exec();
+
+  if (post === null) {
+    res.sendStatus(404);
+  }
+
+  if (
+    post.likedBy?.find((val) => val.toString() === req.account._id.toString())
+  ) {
+    return res
+      .status(400)
+      .send({ errors: ["Can not like the same post twice"] });
+  }
+
+  post.likedBy.push(req.account._id);
+
+  try {
+    post.save();
+  } catch (err) {
+    res.sendStatus(500);
+  }
+
+  res.status(200).send(post.toObject());
+});
+
 export default BlogPostRoutes;
