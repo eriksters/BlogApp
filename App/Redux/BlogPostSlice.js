@@ -99,7 +99,6 @@ const slice = createSlice({
       state.loadingMore = false;
       state.data = [...state.data, ...action.payload.data];
       state.currentPage = action.payload.page;
-      console.log(action.payload.data.length);
       if (action.payload.data.length < 10) state.endReached = true;
     });
     builder.addCase(loadMore.rejected, (state, action) => {

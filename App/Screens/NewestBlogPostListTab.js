@@ -5,19 +5,26 @@ import BlogPostList from "../Components/BlogPostList";
 import { getNewBlogPosts } from "../API/BlogPostEndpoint";
 import { useSelector, useDispatch } from "react-redux";
 import { loadMore, refresh } from "../Redux/BlogPostSlice";
+import { useFocusEffect, useIsFocused } from "@react-navigation/core";
 
 const NewestBlogPostListTab = ({ navigation }) => {
   const dispatch = useDispatch();
 
+  const isFocused = useIsFocused();
+
   const refreshPosts = () => {
-    console.log("Tab refresh");
     dispatch(refresh({ sortBy: "new", filters: null }));
   };
 
   const loadMorePosts = () => {
-    console.log("Tab load more");
-    dispatch(loadMore({ sortBy: "new", filters: null }));
+    if (isFocused) {
+      dispatch(loadMore({ sortBy: "new", filters: null }));
+    }
   };
+
+  useFocusEffect(() => {
+    refreshPosts();
+  });
 
   return <BlogPostList loadMore={loadMorePosts} refresh={refreshPosts} />;
 };

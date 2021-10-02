@@ -1,11 +1,14 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { View, Text, StyleSheet, FlatList } from "react-native";
 import BlogPostListItem from "./BlogPostListItem";
 import { ActivityIndicator, Colors, IconButton } from "react-native-paper";
 import { useSelector } from "react-redux";
+import { useFocusEffect } from "@react-navigation/core";
 
 const BlogPostList = ({ loadMore, refresh }) => {
   const postsState = useSelector((state) => state.blogPosts);
+
+  const flatListRef = useRef();
 
   const onEndReached = async () => {
     loadMore();
@@ -14,6 +17,12 @@ const BlogPostList = ({ loadMore, refresh }) => {
   const onRefresh = async () => {
     refresh();
   };
+
+  useEffect(() => {
+    if (postsState.refreshing) {
+      flatListRef.current.scrollToOffset({ animated: true, offset: 0 });
+    }
+  }, [postsState.refreshing]);
 
   const ListEmptyComponent = () => (
     <View style={styles.emptyListContainer}>
@@ -50,6 +59,7 @@ const BlogPostList = ({ loadMore, refresh }) => {
         onRefresh={onRefresh}
         contentContainerStyle={styles.list}
         data={postsState.data}
+        extraData={postsState.data}
         renderItem={({ item }) => {
           return (
             <BlogPostListItem BlogPost={item} onDeleteCallback={refresh} />
@@ -61,6 +71,7 @@ const BlogPostList = ({ loadMore, refresh }) => {
         ListFooterComponent={ListFooterComponent}
         onEndReached={onEndReached}
         ItemSeparatorComponent={ItemSeparatorComponent}
+        ref={flatListRef}
       />
     </View>
   );

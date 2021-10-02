@@ -5,56 +5,47 @@ import { useSelector, useDispatch } from "react-redux";
 import { signOut } from "../Redux/AccountSlice";
 import BlogPostList from "../Components/BlogPostList";
 import { getNewBlogPosts } from "../API/BlogPostEndpoint";
-import { NavigationRouteContext } from "@react-navigation/core";
+import { useIsFocused, useFocusEffect } from "@react-navigation/core";
+import { loadMore, refresh } from "../Redux/BlogPostSlice";
 
 const MyBlogPostListTab = ({ navigation, route }) => {
-  const [BlogPosts, setBlogPosts] = useState([]);
-  const [refreshing, setRefreshing] = useState(false);
-  const [loadingMore, setLoadingMore] = useState(false);
-  const [endReached, setEndReached] = useState(false);
-
   const creatorId = route.params?.creatorId;
 
-  const refresh = async () => {
-    setEndReached(false);
-    const posts = await getNewBlogPosts(undefined, { createdBy: creatorId });
-    setBlogPosts(posts);
-    if (posts.length === 0) {
-      setEndReached(true);
-    }
-  };
-
-  const loadMore = async () => {
-    const newPosts = await getNewBlogPosts(
-      BlogPosts[BlogPosts.length - 1].CreateTime,
-      { createdBy: creatorId }
-    );
-
-    if (newPosts.length > 0) {
-      setBlogPosts([...BlogPosts, ...newPosts]);
-    } else {
-      setEndReached(true);
-    }
-  };
+  const isFocused = useIsFocused();
+  const dispatch = useDispatch();
 
   const onCreatePressed = () => {
     navigation.navigate("Create");
   };
 
-  useEffect(() => {
-    if (route.params?.NewPost) {
-      console.log("There is a new post");
-      refresh();
-      route.params.NewPost = false;
-    }
-  }, [route.params?.NewPost]);
+  const refreshPosts = () => {
+    dispatch(refresh({ sortBy: "new", filters: { createdBy: creatorId } }));
+  };
 
-  useEffect(() => {
-    if (route.params?.UpdatedPost) {
-      refresh();
-      route.params.UpdatedPost = false;
+  const loadMorePosts = () => {
+    console.log("Is focused: ");
+    if (isFocused) {
+      console.log("My posts loading more, why tho?");
+      dispatch(loadMore({ sortBy: "new", filters: { createdBy: creatorId } }));
     }
-  }, [route.params?.UpdatedPost]);
+  };
+
+  useFocusEffect(() => {
+    refreshPosts();
+  });
+
+  return (
+    <>
+      <BlogPostList loadMore={loadMorePosts} refresh={refreshPosts} />
+      <IconButton
+        icon='plus-circle'
+        color={Colors.blue500}
+        size={60}
+        onPress={onCreatePressed}
+        style={styles.createButton}
+      />
+    </>
+  );
 
   return (
     <>
