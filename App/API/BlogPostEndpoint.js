@@ -45,11 +45,15 @@ export const createBlogPost = async (
     })
   );
 
-  return await api.post("/blogposts", data, {
+  const response = await api.post("/blogposts", data, {
     headers: {
       "Content-Type": "multipart/form-data",
     },
   });
+
+  console.log(response.data);
+
+  return null;
 };
 
 export const editBlogPost = async (

@@ -4,6 +4,7 @@ import getEnvVars from "../environment";
 import {
   getBlogPosts as API_getBlogPosts,
   likeBlogPost as API_likeBlogPost,
+  createBlogPost as API_createBlogPost,
 } from "../API/BlogPostEndpoint";
 
 export const refresh = createAsyncThunk(
@@ -62,6 +63,28 @@ export const like = createAsyncThunk(
     console.log("Liking post thunk");
     try {
       return await API_likeBlogPost(query.postId);
+    } catch (err) {
+      if (err.response) {
+        return thunkAPI.rejectWithValue({ errors: err.response.errors });
+      } else {
+        return thunkAPI.rejectWithValue({
+          errors: ["Problem with network. Are you connected to the internet?"],
+        });
+      }
+    }
+  }
+);
+
+export const create = createAsyncThunk(
+  "blogPosts/create",
+  async (query, thunkAPI) => {
+    try {
+      return await API_createBlogPost(
+        query.title,
+        query.description,
+        query.content,
+        query.thumbnailURL
+      );
     } catch (err) {
       if (err.response) {
         return thunkAPI.rejectWithValue({ errors: err.response.errors });
@@ -147,6 +170,23 @@ const slice = createSlice({
       let post = state.data.find((val) => val._id === action.meta.arg.postId);
       post.likedByMe = false;
       state.errors = action.payload.errors;
+    });
+
+    //  Create
+    builder.addCase(create.pending, (state) => {
+      state.saving = true;
+      state.errors = [];
+      console.log("Pending");
+    });
+    builder.addCase(create.fulfilled, (state, action) => {
+      state.saving = false;
+      state.errors = [];
+      console.log("Fulfilled");
+    });
+    builder.addCase(create.rejected, (state, action) => {
+      state.saving = false;
+      state.errors = action.payload.errors;
+      console.log("Rejected");
     });
   },
 });

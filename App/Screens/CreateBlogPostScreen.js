@@ -1,4 +1,4 @@
-import React, { useState, useReducer } from "react";
+import React, { useState, useReducer, useEffect } from "react";
 import { View, ScrollView, Text, StyleSheet, Image, Alert } from "react-native";
 import * as DocumentPicker from "expo-document-picker";
 import * as ImagePicker from "expo-image-picker";
@@ -7,10 +7,15 @@ import axios from "axios";
 import getEnvVars from "../environment";
 import BlogPostEditor from "../Components/BlogPostEditor";
 import { createBlogPost } from "../API/BlogPostEndpoint";
+import { useSelector, useDispatch } from "react-redux";
+import { create } from "../Redux/BlogPostSlice";
 
 const CreateBlogPostScreen = ({ navigation, route }) => {
   const [BlogPost, setBlogPost] = useState({});
-  const [saving, setSaving] = useState(false);
+  const [hasSaved, setHasSaved] = useState(false);
+
+  const globalState = useSelector((state) => state.blogPosts);
+  const globalDispatch = useDispatch();
 
   const reducer = (state, action) => {
     switch (action.type) {
@@ -30,30 +35,30 @@ const CreateBlogPostScreen = ({ navigation, route }) => {
   const [state, dispatch] = useReducer(reducer, BlogPost);
 
   const onSave = async () => {
-    setSaving(true);
+    setHasSaved(true);
 
-    try {
-      await createBlogPost(
-        state.Title,
-        state.Description,
-        state.Content,
-        state.ThumbnailURL
-      );
-
-      navigation.navigate({ name: "Mine", params: { NewPost: true } });
-    } catch (err) {
-      console.log("Error saving post\n", err);
-    }
-
-    setSaving(false);
+    globalDispatch(
+      create({
+        title: state.Title,
+        description: state.Description,
+        content: state.Content,
+        thumbnailURL: state.ThumbnailURL,
+      })
+    );
   };
+
+  useEffect(() => {
+    if (!globalState.saving && hasSaved && globalState.errors.length === 0) {
+      navigation.pop();
+    }
+  }, [globalState.saving]);
 
   return (
     <BlogPostEditor
       State={state}
       update={dispatch}
       onSave={onSave}
-      saving={saving}
+      saving={globalState.saving}
     />
   );
 };

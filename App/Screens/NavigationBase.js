@@ -39,7 +39,7 @@ import SignUpScreen from "./SignUpScreen";
 import { createStackNavigator } from "@react-navigation/stack";
 import { useSelector, useDispatch } from "react-redux";
 import TestTab from "./TestTab";
-import { like } from "../Redux/BlogPostSlice";
+import { create, like } from "../Redux/BlogPostSlice";
 
 const TabComponent = () => {
   const Tab = createBottomTabNavigator();
@@ -113,8 +113,17 @@ const NavigationBase = () => {
   const posts = useSelector((state) => state.blogPosts);
 
   const onTestPress = () => {
-    console.log("Liking post");
-    dispatch(like({ postId: "61508d50e8c2952ff1015392" }));
+    console.log("Creating post");
+    // dispatch(like({ postId: "61508d50e8c2952ff1015392" }));
+    const newPost = {
+      title: "New",
+      description: "Blog",
+      content: "Post",
+      thumbnailURL:
+        "file:///data/user/0/host.exp.exponent/cache/ExperienceData/%2540eriksters%252FBlogApp/ImagePicker/b42d0b52-06ae-4f6f-a3b7-2b60ec00627a.jpg",
+    };
+
+    dispatch(create(newPost));
   };
 
   return (
