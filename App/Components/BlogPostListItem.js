@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   View,
   Text,
@@ -7,7 +7,6 @@ import {
   TouchableOpacity,
   Alert,
 } from "react-native";
-import { useState } from "react";
 import { LinearGradient } from "expo-linear-gradient";
 import { Entypo, MaterialIcons } from "@expo/vector-icons";
 import Collapsible from "react-native-collapsible";
@@ -18,6 +17,8 @@ import { deleteBlogPost } from "../API/BlogPostEndpoint";
 import { Colors } from "react-native-paper";
 import { useSelector } from "react-redux";
 import LikeCounter from "./LikeCounter";
+import { useDispatch } from "react-redux";
+import { like } from "../Redux/BlogPostSlice";
 
 const BlogPostListItem = ({ BlogPost, onDeleteCallback }) => {
   const navigation = useNavigation();
@@ -25,6 +26,7 @@ const BlogPostListItem = ({ BlogPost, onDeleteCallback }) => {
   const [expanded, setExpanded] = useState(false);
 
   const account = useSelector((state) => state.account);
+  const dispatch = useDispatch();
 
   const onDeletePress = async () => {
     console.log("alerting");
@@ -58,13 +60,39 @@ const BlogPostListItem = ({ BlogPost, onDeleteCallback }) => {
     });
   };
 
+  const onLikePressed = () => {
+    if (!isPostLiked()) {
+      dispatch(like({ postId: BlogPost._id }));
+    }
+  };
+
+  const isPostLiked = () => {
+    return (
+      BlogPost.likedByMe || BlogPost.likedBy.find((val) => val === account._id)
+    );
+  };
+
+  const getPostLikeCount = () => {
+    // console.log(BlogPost);
+    // console.log(BlogPost.likedBy);
+    // return 69;
+    return BlogPost.likedByMe
+      ? BlogPost.likedBy.length + 1
+      : BlogPost.likedBy.length;
+  };
+
   return (
     <View style={styles.container}>
       <TouchableOpacity activeOpacity={0.8} onPress={onViewPressed}>
         <View>
           {BlogPost.ThumbnailURL ? (
             <View style={styles.imageContainer}>
-              <LikeCounter value={BlogPost.LikeCount} style={styles.likes} />
+              <LikeCounter
+                value={getPostLikeCount()}
+                style={styles.likes}
+                liked={isPostLiked()}
+                onPress={onLikePressed}
+              />
               <Image
                 source={{ uri: BlogPost.ThumbnailURL }}
                 style={styles.image}

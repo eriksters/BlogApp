@@ -1,7 +1,10 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 import getEnvVars from "../environment";
-import { getBlogPosts as API_getBlogPosts } from "../API/BlogPostEndpoint";
+import {
+  getBlogPosts as API_getBlogPosts,
+  likeBlogPost as API_likeBlogPost,
+} from "../API/BlogPostEndpoint";
 
 export const refresh = createAsyncThunk(
   "blogPosts/refresh",
@@ -49,6 +52,24 @@ export const loadMore = createAsyncThunk(
       return thunkAPI.rejectWithValue({
         errors: [],
       });
+    }
+  }
+);
+
+export const like = createAsyncThunk(
+  "blogPosts/like",
+  async (query, thunkAPI) => {
+    console.log("Liking post thunk");
+    try {
+      return await API_likeBlogPost(query.postId);
+    } catch (err) {
+      if (err.response) {
+        return thunkAPI.rejectWithValue({ errors: err.response.errors });
+      } else {
+        return thunkAPI.rejectWithValue({
+          errors: ["Problem with network. Are you connected to the internet?"],
+        });
+      }
     }
   }
 );
@@ -104,6 +125,28 @@ const slice = createSlice({
     builder.addCase(loadMore.rejected, (state, action) => {
       state.errors = action.payload.errors;
       state.loadingMore = false;
+    });
+
+    //  Like
+    builder.addCase(like.pending, (state, action) => {
+      state.errors = [];
+      const post = state.data.find((val) => val._id === action.meta.arg.postId);
+      post.likedByMe = true;
+    });
+    builder.addCase(like.fulfilled, (state, action) => {
+      const returnedPost = action.payload.data;
+      state.data = state.data.map((val) => {
+        if (val._id.toString() === action.payload.data._id.toString()) {
+          return returnedPost;
+        } else {
+          return val;
+        }
+      });
+    });
+    builder.addCase(like.rejected, (state, action) => {
+      let post = state.data.find((val) => val._id === action.meta.arg.postId);
+      post.likedByMe = false;
+      state.errors = action.payload.errors;
     });
   },
 });

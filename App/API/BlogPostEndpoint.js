@@ -97,3 +97,11 @@ export const deleteBlogPost = async (id) => {
 
   await api.delete("/blogposts/" + id);
 };
+
+export const likeBlogPost = async (id) => {
+  const api = getInstance();
+
+  const response = await api.post(`/blogposts/${id}/likes`);
+
+  return response.data;
+};

@@ -37,8 +37,9 @@ import EditBlogPostScreen from "./EditBlogPostScreen";
 import SignInScreen from "./SignInScreen";
 import SignUpScreen from "./SignUpScreen";
 import { createStackNavigator } from "@react-navigation/stack";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import TestTab from "./TestTab";
+import { like } from "../Redux/BlogPostSlice";
 
 const TabComponent = () => {
   const Tab = createBottomTabNavigator();
@@ -107,11 +108,13 @@ const NavigationBase = () => {
   const AuthStack = createStackNavigator();
   const MainStack = createStackNavigator();
 
+  const dispatch = useDispatch();
   const account = useSelector((state) => state.account);
   const posts = useSelector((state) => state.blogPosts);
 
   const onTestPress = () => {
-    console.log(posts);
+    console.log("Liking post");
+    dispatch(like({ postId: "61508d50e8c2952ff1015392" }));
   };
 
   return (

@@ -220,7 +220,7 @@ BlogPostRoutes.delete("/:id", RequireAuth, async (req, res) => {
 BlogPostRoutes.post("/:id/likes", RequireAuth, async (req, res) => {
   const id = req.params.id;
 
-  const post = await BlogPostModel.findOne({ _id: id }).exec();
+  let post = await BlogPostModel.findOne({ _id: id }).exec();
 
   if (post === null) {
     res.sendStatus(404);
@@ -242,7 +242,10 @@ BlogPostRoutes.post("/:id/likes", RequireAuth, async (req, res) => {
     res.sendStatus(500);
   }
 
-  res.status(200).send(post.toObject());
+  post = post.toObject();
+  post.ThumbnailURL = createAbsoluteURLFromRelative(post.ThumbnailURL);
+
+  res.status(200).send({ data: post });
 });
 
 export default BlogPostRoutes;

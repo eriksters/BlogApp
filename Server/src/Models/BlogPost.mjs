@@ -10,12 +10,7 @@ const BlogPostSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  LikeCount: {
-    type: Number,
-    default: 0,
-    required: true,
-  },
-  likedBy: { type: [mongoose.Types.ObjectId], required: true, default: [] },
+  likedBy: [{ type: mongoose.Types.ObjectId, required: true, default: [] }],
 });
 
 mongoose.model("BlogPost", BlogPostSchema);
