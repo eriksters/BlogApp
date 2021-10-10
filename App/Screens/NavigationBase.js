@@ -40,6 +40,7 @@ import { createStackNavigator } from "@react-navigation/stack";
 import { useSelector, useDispatch } from "react-redux";
 import TestTab from "./TestTab";
 import { create, like } from "../Redux/BlogPostSlice";
+import BlogPostListScreen from "./BlogPostListScreen";
 
 const TabComponent = () => {
   const Tab = createBottomTabNavigator();
@@ -149,11 +150,12 @@ const NavigationBase = () => {
             initialRouteName='Home'
             screenOptions={{ headerShown: false }}
           >
-            <MainStack.Screen name='Home' component={TabComponent} />
+            {/* <MainStack.Screen name='Home' component={TabComponent} /> */}
             <MainStack.Screen name='Create' component={CreateBlogPostScreen} />
             <MainStack.Screen name='Edit' component={EditBlogPostScreen} />
             <MainStack.Screen name='View' component={ViewBlogPostScreen} />
             <MainStack.Screen name='CreatedBy' component={MyBlogPostListTab} />
+            <MainStack.Screen name='Home' component={BlogPostListScreen} />
           </MainStack.Navigator>
         )}
       </NavigationContainer>

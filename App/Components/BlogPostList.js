@@ -80,7 +80,7 @@ const BlogPostList = ({ loadMore, refresh }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    margin: 8,
+    marginHorizontal: 8,
   },
   list: {
     paddingTop: 50,
