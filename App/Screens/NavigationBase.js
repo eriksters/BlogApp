@@ -25,7 +25,7 @@ import {
 // import { createStore, combineReducers } from "redux";
 import { Provider as ReduxProvider } from "react-redux";
 import { configureStore } from "@reduxjs/toolkit";
-import AccountReducer from "../Redux/AccountSlice";
+import AccountReducer, { signOut } from "../Redux/AccountSlice";
 
 import ViewBlogPostScreen from "./ViewBlogPostScreen";
 import CreateBlogPostScreen from "./CreateBlogPostScreen";
@@ -113,29 +113,8 @@ const NavigationBase = () => {
   const account = useSelector((state) => state.account);
   const posts = useSelector((state) => state.blogPosts);
 
-  const onTestPress = () => {
-    console.log("Creating post");
-    // dispatch(like({ postId: "61508d50e8c2952ff1015392" }));
-    const newPost = {
-      title: "New",
-      description: "Blog",
-      content: "Post",
-      thumbnailURL:
-        "file:///data/user/0/host.exp.exponent/cache/ExperienceData/%2540eriksters%252FBlogApp/ImagePicker/b42d0b52-06ae-4f6f-a3b7-2b60ec00627a.jpg",
-    };
-
-    dispatch(create(newPost));
-  };
-
   return (
     <>
-      <IconButton
-        onPress={onTestPress}
-        style={styles.testButton}
-        icon='alpha-t-circle'
-        size={50}
-        color={Colors.amber500}
-      />
       <NavigationContainer>
         {account.signInStatus === "none" ? (
           <AuthStack.Navigator
@@ -151,11 +130,11 @@ const NavigationBase = () => {
             screenOptions={{ headerShown: false }}
           >
             {/* <MainStack.Screen name='Home' component={TabComponent} /> */}
+            <MainStack.Screen name='Home' component={BlogPostListScreen} />
             <MainStack.Screen name='Create' component={CreateBlogPostScreen} />
             <MainStack.Screen name='Edit' component={EditBlogPostScreen} />
             <MainStack.Screen name='View' component={ViewBlogPostScreen} />
             <MainStack.Screen name='CreatedBy' component={MyBlogPostListTab} />
-            <MainStack.Screen name='Home' component={BlogPostListScreen} />
           </MainStack.Navigator>
         )}
       </NavigationContainer>
@@ -171,12 +150,6 @@ const styles = StyleSheet.create({
     backgroundColor: "#F0F0F0",
     alignItems: "center",
     justifyContent: "flex-start",
-  },
-  testButton: {
-    position: "absolute",
-    right: 10,
-    top: 20,
-    zIndex: 1,
   },
 });
 export default NavigationBase;

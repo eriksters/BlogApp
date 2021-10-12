@@ -16,10 +16,10 @@ const SignUpScreen = ({ navigation }) => {
   const account = useSelector((state) => state.account);
   const dispatch = useDispatch();
 
-  const [username, setUsername] = useState("eriksters");
-  const [email, setEmail] = useState("email@email.com");
-  const [password, setPassword] = useState("[Password1]");
-  const [confPassword, setConfPassword] = useState("[Password1]");
+  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confPassword, setConfPassword] = useState("");
   const [errors, setErrors] = useState([]);
 
   useEffect(() => {

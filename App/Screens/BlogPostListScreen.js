@@ -15,8 +15,9 @@ import {
 } from "../Redux/BlogPostSlice";
 import { useSelector } from "react-redux";
 import { IconButton, Colors } from "react-native-paper";
+import { signOut } from "../Redux/AccountSlice";
 
-const BlogPostListScreen = () => {
+const BlogPostListScreen = ({ navigation }) => {
   const [selectedTab, setSelectedTab] = useState("new");
 
   const dispatch = useDispatch();
@@ -26,11 +27,39 @@ const BlogPostListScreen = () => {
     dispatch(refreshAction({ sortBy: "new", filters: {} }));
   };
 
+  const refreshPopular = () => {
+    dispatch(refreshAction({ sortBy: "popular", filters: {} }));
+  };
+
+  const refreshTop = () => {
+    dispatch(refreshAction({ sortBy: "top", filters: {} }));
+  };
+
   const loadMoreNew = () => {
     console.log(posts);
     dispatch(
       loadMoreAction({
         sortBy: "new",
+        filters: {},
+        page: posts.currentPage + 1,
+      })
+    );
+  };
+
+  const loadMorePopular = () => {
+    dispatch(
+      loadMoreAction({
+        sortBy: "popular",
+        filters: {},
+        page: posts.currentPage + 1,
+      })
+    );
+  };
+
+  const loadMoreTop = () => {
+    dispatch(
+      loadMoreAction({
+        sortBy: "top",
         filters: {},
         page: posts.currentPage + 1,
       })
@@ -56,6 +85,10 @@ const BlogPostListScreen = () => {
         refreshNew();
         break;
       case "popular":
+        refreshPopular();
+        return;
+      case "top":
+        refreshTop();
         return;
       default:
         return;
@@ -68,6 +101,10 @@ const BlogPostListScreen = () => {
         loadMoreNew();
         break;
       case "popular":
+        loadMorePopular();
+        return;
+      case "top":
+        loadMoreTop();
         return;
       default:
         return;
@@ -76,6 +113,22 @@ const BlogPostListScreen = () => {
 
   const onCreatePressed = () => {
     navigation.navigate("Create");
+  };
+
+  const onTestPress = () => {
+    // console.log("Creating post");
+    // // dispatch(like({ postId: "61508d50e8c2952ff1015392" }));
+    // const newPost = {
+    //   title: "New",
+    //   description: "Blog",
+    //   content: "Post",
+    //   thumbnailURL:
+    //     "file:///data/user/0/host.exp.exponent/cache/ExperienceData/%2540eriksters%252FBlogApp/ImagePicker/b42d0b52-06ae-4f6f-a3b7-2b60ec00627a.jpg",
+    // };
+
+    // dispatch(create(newPost));
+
+    dispatch(signOut());
   };
 
   useEffect(() => {
@@ -90,6 +143,13 @@ const BlogPostListScreen = () => {
         size={60}
         onPress={onCreatePressed}
         style={styles.createButton}
+      />
+      <IconButton
+        onPress={onTestPress}
+        style={styles.testButton}
+        icon='exit-run'
+        size={50}
+        color={Colors.deepOrange700}
       />
       <BlogPostList refresh={refresh} loadMore={loadMore} />
       <View style={styles.tabBar}>
@@ -141,6 +201,12 @@ const styles = StyleSheet.create({
   createButton: {
     position: "absolute",
     right: 8,
+    bottom: 50,
+    zIndex: 1,
+  },
+  testButton: {
+    position: "absolute",
+    left: 10,
     bottom: 50,
     zIndex: 1,
   },

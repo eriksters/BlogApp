@@ -58,10 +58,14 @@ BlogPostRoutes.get("/", async (req, res) => {
     params.page = 1;
   }
 
-  //  Construct the query
   query = BlogPostModel.find({});
 
-  if (params.sortBy === "new") {
+  //  Construct the query
+  if (params.sortBy === "popular") {
+    query.sort({});
+  } else if (params.sortBy === "top") {
+    query.sort({ likedBy: -1 });
+  } else {
     query.sort({ CreateTime: "descending" });
   }
 
