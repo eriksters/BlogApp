@@ -62,11 +62,14 @@ BlogPostRoutes.get("/", async (req, res) => {
 
   //  Construct the query
   if (params.sortBy === "popular") {
-    query.sort({});
+    var d = new Date();
+    d.setDate(d.getDate() - 1);
+
+    query.where("CreateTime").gt(d).sort({ likedBy: -1, _id: "descending" });
   } else if (params.sortBy === "top") {
-    query.sort({ likedBy: -1 });
+    query.sort({ likedBy: -1, _id: "descending" });
   } else {
-    query.sort({ CreateTime: "descending" });
+    query.sort({ CreateTime: "descending", _id: "descending" });
   }
 
   if (params.createdBy) {
