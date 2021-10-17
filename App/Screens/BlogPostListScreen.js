@@ -22,6 +22,7 @@ const BlogPostListScreen = ({ navigation }) => {
 
   const dispatch = useDispatch();
   const posts = useSelector((state) => state.blogPosts);
+  const account = useSelector((state) => state.account);
 
   const refreshNew = () => {
     dispatch(refreshAction({ sortBy: "new", filters: {} }));
@@ -79,7 +80,6 @@ const BlogPostListScreen = ({ navigation }) => {
   };
 
   const refresh = () => {
-    console.log("refresh");
     switch (selectedTab) {
       case "new":
         refreshNew();
@@ -115,42 +115,21 @@ const BlogPostListScreen = ({ navigation }) => {
     navigation.navigate("Create");
   };
 
-  const onTestPress = () => {
-    // console.log("Creating post");
-    // // dispatch(like({ postId: "61508d50e8c2952ff1015392" }));
-    // const newPost = {
-    //   title: "New",
-    //   description: "Blog",
-    //   content: "Post",
-    //   thumbnailURL:
-    //     "file:///data/user/0/host.exp.exponent/cache/ExperienceData/%2540eriksters%252FBlogApp/ImagePicker/b42d0b52-06ae-4f6f-a3b7-2b60ec00627a.jpg",
-    // };
-
-    // dispatch(create(newPost));
-
-    dispatch(signOut());
-  };
-
   useEffect(() => {
     refresh();
   }, [selectedTab]);
 
   return (
     <View style={styles.container}>
-      <IconButton
-        icon='plus-circle'
-        color={Colors.blue500}
-        size={60}
-        onPress={onCreatePressed}
-        style={styles.createButton}
-      />
-      <IconButton
-        onPress={onTestPress}
-        style={styles.testButton}
-        icon='exit-run'
-        size={50}
-        color={Colors.deepOrange700}
-      />
+      {account.signInStatus === "SignedIn" ? (
+        <IconButton
+          icon='plus-circle'
+          color={Colors.blue500}
+          size={60}
+          onPress={onCreatePressed}
+          style={styles.createButton}
+        />
+      ) : null}
       <BlogPostList refresh={refresh} loadMore={loadMore} />
       <View style={styles.tabBar}>
         <TabItem
@@ -201,12 +180,6 @@ const styles = StyleSheet.create({
   createButton: {
     position: "absolute",
     right: 8,
-    bottom: 50,
-    zIndex: 1,
-  },
-  testButton: {
-    position: "absolute",
-    left: 10,
     bottom: 50,
     zIndex: 1,
   },

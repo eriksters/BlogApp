@@ -41,80 +41,65 @@ import { useSelector, useDispatch } from "react-redux";
 import TestTab from "./TestTab";
 import { create, like } from "../Redux/BlogPostSlice";
 import BlogPostListScreen from "./BlogPostListScreen";
+import { createDrawerNavigator } from "@react-navigation/drawer";
+import AccountScreen from "./AccountScreen";
 
-const TabComponent = () => {
-  const Tab = createBottomTabNavigator();
-  const account = useSelector((state) => state.account);
+const PostsStack = () => {
+  const MainStack = createStackNavigator();
+
   return (
-    <Tab.Navigator
-      initialRouteName={"Newest"}
+    <MainStack.Navigator
+      initialRouteName='Home'
       screenOptions={{ headerShown: false }}
     >
-      <Tab.Screen
-        name='Newest'
-        component={NewestBlogPostListTab}
-        options={{
-          tabBarIcon: ({ color, size }) => (
-            <MaterialCommunityIcons
-              name='newspaper'
-              size={size}
-              color={color}
-            />
-          ),
-          tabBarLabel: "New",
-        }}
-      />
-      <Tab.Screen
-        name='Popular'
-        component={PopularBlogPostListTab}
-        options={{
-          tabBarIcon: ({ color, size }) => (
-            <Octicons name='flame' size={size} color={color} />
-          ),
-        }}
-      />
-      <Tab.Screen
-        name='Top'
-        component={TopBlogPostListTab}
-        options={{
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name='ribbon-sharp' size={size} color={color} />
-          ),
-        }}
-      />
-      <Tab.Screen
-        name='Mine'
-        component={MyBlogPostListTab}
-        options={{
-          tabBarIcon: ({ color, size }) => (
-            <MaterialIcons name='account-circle' size={size} color={color} />
-          ),
-        }}
-        initialParams={{ creatorId: account._id }}
-      />
-      <Tab.Screen
-        name='Test'
-        component={TestTab}
-        options={{
-          tabBarIcon: ({ color, size }) => (
-            <MaterialCommunityIcons name='plus-box' size={size} color={color} />
-          ),
-        }}
-      />
-    </Tab.Navigator>
+      <MainStack.Screen name='Home' component={BlogPostListScreen} />
+      <MainStack.Screen name='Create' component={CreateBlogPostScreen} />
+      <MainStack.Screen name='Edit' component={EditBlogPostScreen} />
+      <MainStack.Screen name='View' component={ViewBlogPostScreen} />
+      <MainStack.Screen name='CreatedBy' component={MyBlogPostListTab} />
+    </MainStack.Navigator>
   );
 };
 
-const NavigationBase = () => {
+const MainStackComponent = () => {
+  const Drawer = createDrawerNavigator();
+
+  return (
+    <Drawer.Navigator
+      initialRouteName='ListStack'
+      screenOptions={{ headerShown: false }}
+    >
+      <Drawer.Screen
+        component={PostsStack}
+        name='ListStack'
+        options={({ route }) => ({
+          title: route.params?.title || "Posts",
+        })}
+      />
+      <Drawer.Screen component={AccountScreen} name='Account' />
+    </Drawer.Navigator>
+  );
+};
+
+const NavigationBase = ({ navigation }) => {
   const AuthStack = createStackNavigator();
-  const MainStack = createStackNavigator();
 
   const dispatch = useDispatch();
   const account = useSelector((state) => state.account);
   const posts = useSelector((state) => state.blogPosts);
 
+  const onDrawerPress = () => {
+    console.log("Opening drawer");
+  };
+
   return (
     <>
+      {/* <IconButton
+        icon='format-list-bulleted'
+        style={styles.drawerButton}
+        onPress={onDrawerPress}
+        size={30}
+      /> */}
       <NavigationContainer>
         {account.signInStatus === "none" ? (
           <AuthStack.Navigator
@@ -125,17 +110,7 @@ const NavigationBase = () => {
             <AuthStack.Screen name='SignUp' component={SignUpScreen} />
           </AuthStack.Navigator>
         ) : (
-          <MainStack.Navigator
-            initialRouteName='Home'
-            screenOptions={{ headerShown: false }}
-          >
-            {/* <MainStack.Screen name='Home' component={TabComponent} /> */}
-            <MainStack.Screen name='Home' component={BlogPostListScreen} />
-            <MainStack.Screen name='Create' component={CreateBlogPostScreen} />
-            <MainStack.Screen name='Edit' component={EditBlogPostScreen} />
-            <MainStack.Screen name='View' component={ViewBlogPostScreen} />
-            <MainStack.Screen name='CreatedBy' component={MyBlogPostListTab} />
-          </MainStack.Navigator>
+          <MainStackComponent />
         )}
       </NavigationContainer>
     </>
@@ -150,6 +125,12 @@ const styles = StyleSheet.create({
     backgroundColor: "#F0F0F0",
     alignItems: "center",
     justifyContent: "flex-start",
+  },
+  drawerButton: {
+    position: "absolute",
+    top: 50,
+    left: 10,
+    zIndex: 1,
   },
 });
 export default NavigationBase;
